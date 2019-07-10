@@ -30,11 +30,11 @@ param: Deep_of_Discharge := 0.2;
 
 param: Deep_of_Tank_Discharge := 0.2;
 
-param: Maximun_Battery_Discharge_Time := 5;
+param: Maximun_Battery_Discharge_Time := 5; # hours
 
-param: Maximun_Battery_Charge_Time := 5;
+param: Maximun_Battery_Charge_Time := 5;    # hours
 
-param: Maximun_Tank_Discharge_Time:= 2.5;
+param: Maximun_Tank_Discharge_Time:= 2.5;   # hours
 
 param: Battery_Reposition_Time := 10;
 
