@@ -148,7 +148,6 @@ def Model_Creation(model):
     model.Scenario_Lost_Load_Cost = Var(model.scenario, within=NonNegativeReals) ####
     model.Scenario_Lost_Load_Cost_Th = Var(model.scenario, within=NonNegativeReals) ####
     model.Thermal_Energy_Curtailment = Var(model.scenario, model.classes, model.periods, within=NonNegativeReals)
-    model.Total_Thermal_Energy_Demand = Var(model.scenario, model.classes, model.periods,  within=NonNegativeReals) # This is the thermal demand considering all the users in that class
 
     # Variables associated to the financial costs
     model.SC_Financial_Cost = Var(within=NonNegativeReals) # Financial cost of SC technology considering all the classes

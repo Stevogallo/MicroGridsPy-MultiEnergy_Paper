@@ -200,17 +200,9 @@ def NG_Consumption(model,i,c,t): # NG comsuption
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''
-    return model.NG_Consume[i,c,t] == model.Boiler_Energy [i,c,t]*model.Delta_Time / (model.Boiler_Efficiency*(model.Low_Heating_Value_NG))
+    return model.NG_Consume[i,c,t] == model.Boiler_Energy[i,c,t]*model.Delta_Time / (model.Boiler_Efficiency*(model.Low_Heating_Value_NG))
 
 ############################################## Energy Constraints ###############################################
-
-def Total_Thermal_Energy_Demand (model, i, c, t):
-    ''' 
-    This constraint calculates the thermal energy demand for all the users in each classs c and for each scenario i. 
-    
-    :param model: Pyomo model as defined in the Model_creation library.
-    '''
-    return model.Total_Thermal_Energy_Demand[i,c,t] == (model.Thermal_Energy_Demand[i,c,t])
 
 def Thermal_Energy_Balance(model,i,c,t): # Thermal energy balance
      '''
@@ -219,7 +211,7 @@ def Thermal_Energy_Balance(model,i,c,t): # Thermal energy balance
      and each scenario i
      :param model: Pyomo model as defined in the Model_creation library.
      '''
-     return  model.Total_Thermal_Energy_Demand[i,c,t] == model.Boiler_Energy[i,c,t]  + model.Energy_Tank_Flow_Out[i,c,t] - model.Thermal_Energy_Curtailment[i,c,t] + model.Lost_Load_Th[i,c,t]
+     return  model.Thermal_Energy_Demand[i,c,t] == model.Boiler_Energy[i,c,t]  + model.Energy_Tank_Flow_Out[i,c,t] - model.Thermal_Energy_Curtailment[i,c,t] + model.Lost_Load_Th[i,c,t]
 
 def Total_Electrical_Resistance_Demand (model,i,t): # The summation of the electrical resistance demand of each class. 
      '''
@@ -230,9 +222,9 @@ def Total_Electrical_Resistance_Demand (model,i,t): # The summation of the elect
      '''
      return model.Total_Electrical_Resistance_Demand[i,t] == sum(model.Resistance_Thermal_Energy[i,c,t] for c in model.classes)
 
-def Energy_balance(model, i, t): # Energy balance
+def Energy_balance(model, i, t): # Electric Energy balance
     '''
-    This constraint ensures the perfect match between the energy energy demand of the 
+    This constraint ensures the perfect match between the electric energy demand of the 
     system and the differents sources to meet the energy demand including 
     the electric resistance demand of thermal part each scenario i.
     
@@ -240,7 +232,7 @@ def Energy_balance(model, i, t): # Energy balance
     '''
     return model.Energy_Demand[i,t] == model.Total_Energy_PV[i,t] + model.Generator_Energy[i,t] - model.Energy_Battery_Flow_In[i,t] + model.Energy_Battery_Flow_Out[i,t] + model.Lost_Load[i,t] - model.Energy_Curtailment[i,t] - model.Total_Electrical_Resistance_Demand[i,t]
 
-def Maximun_Lost_Load(model,i): # Maximum permissible lost load
+def Maximun_Lost_Load(model,i): # Maximum permissible lost load electric
     '''
     This constraint ensures that the ratio between the lost load and the energy 
     Demand does not exceeds the value of the permisible lost load each scenario i. 
@@ -276,7 +268,7 @@ def Diesel_Comsuption(model,i, t): # Diesel comsuption
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''
-    return model.Diesel_Consume[i,t] == model.Generator_Energy[i,t]/(model.Generator_Efficiency*(model.Low_Heating_Value/model.Delta_Time))
+    return model.Diesel_Consume[i,t] == model.Generator_Energy[i,t]*model.Delta_Time/(model.Generator_Efficiency*(model.Low_Heating_Value))
                                                                                                                                   
                                                                  
 ############################################## Economical Constraints ###################################################
@@ -297,7 +289,7 @@ def Tank_Financial_Cost (model):
    In this way all costs of each class will be considered.
    :param model: Pyomo model as defined in the Model_creation library.
    '''
-   return model.Tank_Financial_Cost == sum(model.Tank_Nominal_Capacity[c]*model.Tank_Invesment_Cost*model.Delta_Time for c in model.classes)
+   return model.Tank_Financial_Cost == sum(model.Tank_Nominal_Capacity[c]*model.Tank_Invesment_Cost for c in model.classes)
 
 def Boiler_Financial_Cost (model):
    ''' 
@@ -324,7 +316,7 @@ def Financial_Cost(model):
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''
-    return model.Cost_Financial == ((model.PV_Units*model.PV_invesment_Cost*model.PV_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Delta_Time + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost)*model.Porcentage_Funded*model.Interest_Rate_Loan)/(1-((1+model.Interest_Rate_Loan)**(-model.Years)))
+    return model.Cost_Financial == ((model.PV_Units*model.PV_invesment_Cost*model.PV_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost)*model.Porcentage_Funded*model.Interest_Rate_Loan)/(1-((1+model.Interest_Rate_Loan)**(-model.Years)))
 
 def Diesel_Cost_Total(model,i):
     '''
@@ -384,7 +376,7 @@ def Initial_Inversion(model):
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''    
-    return model.Initial_Inversion == (model.PV_Units*model.PV_invesment_Cost*model.PV_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Delta_Time + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost )*(1-model.Porcentage_Funded) 
+    return model.Initial_Inversion == (model.PV_Units*model.PV_invesment_Cost*model.PV_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost )*(1-model.Porcentage_Funded) 
                                                                  
 def Operation_Maintenance_Cost(model):
     '''
@@ -392,7 +384,7 @@ def Operation_Maintenance_Cost(model):
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''    
-    return model.Operation_Maintenance_Cost == sum(((model.PV_Units*model.PV_invesment_Cost*model.PV_Nominal_Capacity*model.Maintenance_Operation_Cost_PV + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Delta_Time*model.Maintenance_Operation_Cost_Battery + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost*model.Maintenance_Operation_Cost_Generator + model.SC_Financial_Cost*model.Maintenance_Operation_Cost_SC + model.Tank_Financial_Cost*model.Maintenance_Operation_Cost_Tank + model.Boiler_Financial_Cost*model.Maintenance_Operation_Cost_Boiler + model.Resistance_Financial_Cost*model.Maintenance_Operation_Cost_Resistance)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years) 
+    return model.Operation_Maintenance_Cost == sum(((model.PV_Units*model.PV_invesment_Cost*model.PV_Nominal_Capacity*model.Maintenance_Operation_Cost_PV + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Maintenance_Operation_Cost_Battery + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost*model.Maintenance_Operation_Cost_Generator + model.SC_Financial_Cost*model.Maintenance_Operation_Cost_SC + model.Tank_Financial_Cost*model.Maintenance_Operation_Cost_Tank + model.Boiler_Financial_Cost*model.Maintenance_Operation_Cost_Boiler + model.Resistance_Financial_Cost*model.Maintenance_Operation_Cost_Resistance)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years) 
 
 def Total_Finalcial_Cost(model):
     '''
@@ -408,7 +400,7 @@ def Battery_Reposition_Cost(model):
     
     :param model: Pyomo model as defined in the Model_creation library.
     ''' 
-    return model.Battery_Reposition_Cost == (model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Delta_Time)/((1+model.Discount_Rate)**model.Battery_Reposition_Time)
+    return model.Battery_Reposition_Cost == (model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost)/((1+model.Discount_Rate)**model.Battery_Reposition_Time)
 
 def Scenario_Net_Present_Cost(model, i): 
     '''
