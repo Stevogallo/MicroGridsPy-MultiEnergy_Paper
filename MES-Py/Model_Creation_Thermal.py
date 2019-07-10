@@ -97,7 +97,6 @@ def Model_Creation(model):
     model.Discount_Rate = Param() # Discount rate of the project in %
     model.Interest_Rate_Loan = Param() # Interest rate of the loan in %
     model.Scenario_Weight = Param(model.scenario, within=NonNegativeReals) #########
-    model.Users_Number_Class = Param(model.classes, within=NonNegativeReals) # This parameter defines the number of users for each class
     model.Maintenance_Operation_Cost_SC = Param(within=NonNegativeReals)    # Percentage of the total investment spend in operation and management of solar collectors in each period in %    
     model.Maintenance_Operation_Cost_Boiler = Param (within=NonNegativeReals) # Percentage of the total investment spend in operation and management of boiler in each period in %
     model.Maintenance_Operation_Cost_Tank = Param (within=NonNegativeReals)      # Percentage of the total investment spend in operation and management of tank in each period in %

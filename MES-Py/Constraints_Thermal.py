@@ -210,7 +210,7 @@ def Total_Thermal_Energy_Demand (model, i, c, t):
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''
-    return model.Total_Thermal_Energy_Demand[i,c,t] == (model.Thermal_Energy_Demand[i,c,t]*model.Users_Number_Class[c])
+    return model.Total_Thermal_Energy_Demand[i,c,t] == (model.Thermal_Energy_Demand[i,c,t])
 
 def Thermal_Energy_Balance(model,i,c,t): # Thermal energy balance
      '''

@@ -12,6 +12,7 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import matplotlib.ticker as mtick
 import matplotlib.pylab as pylab
+from Model_Creation_Thermal import model.Periods
 
 def Load_results1(instance):
     '''
@@ -107,7 +108,7 @@ def Load_results1(instance):
     Scenarios.columns = columns
     Scenarios = Scenarios.transpose()
     
-    Scenarios.to_excel('Results/Time_Series.xls') # Creating an excel file with the values of the variables that are in function of the periods
+    Scenarios.to_csv('Results/Time_Series.csv') # Creating an excel file with the values of the variables that are in function of the periods
     
     columns = [] # arreglar varios columns
     for i in range(1, Number_Scenarios+1):
@@ -130,10 +131,10 @@ def Load_results1(instance):
     Scenario_Information.columns=['Scenario NPC', 'LoL Cost','Scenario Weight', 'Diesel Cost']
     Scenario_Information = Scenario_Information.transpose()
     
-    Scenario_Information.to_excel('Results/Scenario_Information.xls')
+    Scenario_Information.to_csv('Results/Scenario_Information.csv')
     
     S = instance.PlotScenario.value
-    Time_Series = pd.DataFrame(index=range(0,35040))
+    Time_Series = pd.DataFrame(index=range(0,model.Periods))
     Time_Series.index = Scenarios.index
     
     Time_Series['Lost Load'] = Scenarios['Lost_Load '+str(S)]
@@ -236,7 +237,7 @@ def Load_Thermal_Results1(instance):
     Scenarios_Classes.columns=columns
     Scenarios_Classes=Scenarios_Classes.transpose()
         
-    Scenarios_Classes.to_excel('Results/Time_Series_Thermal.xlsx') # Creating an excel file with the values of the variables that are in function of the periods
+    Scenarios_Classes.to_csv('Results/Time_Series_Thermal.csv') # Creating an excel file with the values of the variables that are in function of the periods
 
     return Scenarios_Classes
 
@@ -284,7 +285,7 @@ def Load_results2(instance):
                     'Size Generator', 'Diesel Cost','Price Generator']
     # Create a data frame for the variable that don't depend of the periods of analisys 
     Size_variables = pd.DataFrame(data3,index=index_values)
-    Size_variables.to_excel('Results/Size.xls') # Creating an excel file with the values of the variables that does not depend of the periods
+    Size_variables.to_csv('Results/Size.csv') # Creating an excel file with the values of the variables that does not depend of the periods
     
    
     
@@ -398,7 +399,7 @@ def Load_results1_binary(instance):
     Scenarios.columns = columns
     Scenarios = Scenarios.transpose()
     
-    Scenarios.to_excel('Results/Time_Series.xls') # Creating an excel file with the values of the variables that are in function of the periods
+    Scenarios.to_csv('Results/Time_Series.csv') # Creating an excel file with the values of the variables that are in function of the periods
     
     columns = [] # arreglar varios columns
     for i in range(1, Number_Scenarios+1):
@@ -421,10 +422,10 @@ def Load_results1_binary(instance):
     Scenario_Information.columns=['Scenario NPC', 'LoL Cost','Scenario Weight', 'Diesel Cost']
     Scenario_Information = Scenario_Information.transpose()
     
-    Scenario_Information.to_excel('Results/Scenario_Information.xls')
+    Scenario_Information.to_csv('Results/Scenario_Information.csv')
     
     S = instance.PlotScenario.value
-    Time_Series = pd.DataFrame(index=range(0,35040))
+    Time_Series = pd.DataFrame(index=range(0,model.Periods))
     Time_Series.index = Scenarios.index
     
     Time_Series['Lost Load'] = Scenarios['Lost_Load '+str(S)]
@@ -485,7 +486,7 @@ def Load_results2_binary(instance):
                                                'Funded Porcentage', 'Discount Rate', 
                                                'Interest Rate','Precio PV', 'Precio Bateria',
                                                'Precio GenSet','OyM', 'Project years','VOLL'])
-    Size_variables.to_excel('Results/Size.xls') # Creating an excel file with the values of the variables that does not depend of the periods
+    Size_variables.to_csv('Results/Size.csv') # Creating an excel file with the values of the variables that does not depend of the periods
     
     I_Inv = instance.Initial_Inversion.get_values()[None] 
     O_M = instance.Operation_Maintenance_Cost.get_values()[None] 
@@ -496,7 +497,7 @@ def Load_results2_binary(instance):
     Value_costs = pd.DataFrame(Data, index=['Initial Inversion', 'O & M',
                                             'Financial Cost', 'Battery reposition'])
 
-    Value_costs.to_excel('Results/Partial Costs.xls')    
+    Value_costs.to_csv('Results/Partial Costs.csv')    
 
 
     VOLL = instance.Scenario_Lost_Load_Cost.get_values() 
@@ -512,7 +513,7 @@ def Load_results2_binary(instance):
         Scenario_Costs['VOLL'][j]= VOLL[j] 
         Scenario_Costs['Scenario Generator Cost'][j]= Scenario_Generator_Cost[j]
         Scenario_Costs['NPC Scenario'][j]= NPC_Scenario[j]
-    Scenario_Costs.to_excel('Results/Scenario Cost.xls')    
+    Scenario_Costs.to_csv('Results/Scenario Cost.csv')    
     
     return Size_variables
 
@@ -614,7 +615,7 @@ def Load_results1_Integer(instance):
     Scenarios.columns = columns
     Scenarios = Scenarios.transpose()
     
-    Scenarios.to_excel('Results/Time_Series.xls') # Creating an excel file with the values of the variables that are in function of the periods
+    Scenarios.to_csv('Results/Time_Series.csv') # Creating an excel file with the values of the variables that are in function of the periods
     
     columns = [] # arreglar varios columns
     for i in range(1, Number_Scenarios+1):
@@ -637,10 +638,10 @@ def Load_results1_Integer(instance):
     Scenario_Information.columns=['Scenario NPC', 'LoL Cost','Scenario Weight', 'Diesel Cost']
     Scenario_Information = Scenario_Information.transpose()
     
-    Scenario_Information.to_excel('Results/Scenario_Information.xls')
+    Scenario_Information.to_csv('Results/Scenario_Information.csv')
     
     S = instance.PlotScenario.value
-    Time_Series = pd.DataFrame(index=range(0,35040))
+    Time_Series = pd.DataFrame(index=range(0,model.Periods))
     Time_Series.index = Scenarios.index
     
     Time_Series['Lost Load'] = Scenarios['Lost_Load '+str(S)]
@@ -701,7 +702,7 @@ def Load_results2_Integer(instance):
                                                'Precio GenSet','OyM', 'Project years','VOLL',
                                                'Min gen output','Battery efficiency discharge',
                                                'Battery efficiency charge'])
-    Size_variables.to_excel('Results/Size.xls') # Creating an excel file with the values of the variables that does not depend of the periods
+    Size_variables.to_csv('Results/Size.csv') # Creating an excel file with the values of the variables that does not depend of the periods
     
     I_Inv = instance.Initial_Inversion.get_values()[None] 
     O_M = instance.Operation_Maintenance_Cost.get_values()[None] 
@@ -712,7 +713,7 @@ def Load_results2_Integer(instance):
     Value_costs = pd.DataFrame(Data, index=['Initial Inversion', 'O & M',
                                             'Financial Cost', 'Battery reposition'])
 
-    Value_costs.to_excel('Results/Partial Costs.xls')    
+    Value_costs.to_csv('Results/Partial Costs.csv')    
 
 
     VOLL = instance.Scenario_Lost_Load_Cost.get_values() 
@@ -728,7 +729,7 @@ def Load_results2_Integer(instance):
         Scenario_Costs['VOLL'][j]= VOLL[j] 
         Scenario_Costs['Scenario Generator Cost'][j]= Scenario_Generator_Cost[j]
         Scenario_Costs['NPC Scenario'][j]= NPC_Scenario[j]
-    Scenario_Costs.to_excel('Results/Scenario Cost.xls')    
+    Scenario_Costs.to_csv('Results/Scenario Cost.csv')    
     
     return Size_variables
 
@@ -741,7 +742,7 @@ def Results_Analysis_3(instance):
     data_5 = np.array(data_4)
     
     Generator_info = pd.DataFrame(data_5, index=['Cap 1', 'Cap 2', 'Cap 3', 'Bin 1', 'Bin 2', 'Bin 3'])
-    Generator_info.to_excel('Results/Generator.xls')
+    Generator_info.to_csv('Results/Generator.csv')
     
     
 def Plot_Energy_Total(instance, Time_Series):  

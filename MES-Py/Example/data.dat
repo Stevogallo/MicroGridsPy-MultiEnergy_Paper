@@ -1,4 +1,4 @@
-param: Periods := 35040;
+param: Periods := 525600;
 
 param: Years := 20;
 
@@ -10,7 +10,7 @@ param: PlotDay := '06/12/2011 01:00:00';
 
 param: PlotScenario := 1;
 
-param: Delta_Time := 0.25;
+param: Delta_Time := 1/60;
 
 param: PV_Nominal_Capacity := 300;
 
@@ -95,14 +95,4 @@ param: Scenario_Weight :=
 1   1;
 
 param: Classes := 4;
-
-param: Users_Number_Class :=
-1   32
-2   332
-3   6
-4   1;
-
-
-
-
 

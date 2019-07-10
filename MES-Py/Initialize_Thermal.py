@@ -18,7 +18,7 @@ def Initialize_years(model, i):
     '''    
     return i
 
-Energy_Demand = pd.read_excel('Example/Demand.xlsx') # open the energy demand file
+Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv') # open the electric demand demand file
 
 
 def Initialize_Demand(model, i, t):
@@ -32,7 +32,7 @@ def Initialize_Demand(model, i, t):
     '''
     return float(Energy_Demand[i][t])
 
-Thermal_Energy_Demand = pd.read_excel('Example/Thermal_Demand.xlsx') # open the energy thermal demand file
+Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv') # open the energy thermal demand file
 
 def Initialize_Thermal_Demand(model, i, c, t):
     '''
@@ -48,7 +48,7 @@ def Initialize_Thermal_Demand(model, i, c, t):
     return float(Thermal_Energy_Demand[column][t])
 
 
-PV_Energy = pd.read_excel('Example/PV_Energy.xlsx') # open the PV energy yield file
+PV_Energy = pd.read_csv('Inputs/PV_Energy.csv') # open the PV energy yield file
 
 def Initialize_PV_Energy(model, i, t):
     '''
@@ -61,7 +61,7 @@ def Initialize_PV_Energy(model, i, t):
     '''
     return float(PV_Energy[i][t])
 
-SC_Energy = pd.read_excel('Example/SC_Energy.xlsx') # # open the SC energy yield file
+SC_Energy = pd.read_csv('Inputs/SC_Energy.csv') # # open the SC energy yield file
 
 def Initialize_SC_Energy(model, i, c, t):
     '''
