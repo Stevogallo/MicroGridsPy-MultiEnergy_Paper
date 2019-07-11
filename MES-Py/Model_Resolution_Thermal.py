@@ -9,7 +9,7 @@ from pyomo.opt import SolverFactory
 from pyomo.environ import Objective, minimize, Constraint
 
 
-def Model_Resolution(model,datapath="Example/data.dat"):   
+def Model_Resolution(model,datapath="Inputs/data.dat"):   
     '''
     This function creates the model and call Pyomo to solve the instance of the proyect 
     
@@ -25,8 +25,7 @@ def Model_Resolution(model,datapath="Example/data.dat"):
     Initial_Inversion, Operation_Maintenance_Cost, Total_Finalcial_Cost, Battery_Reposition_Cost, Maximun_Diesel_Energy, Diesel_Comsuption,Diesel_Cost_Total, \
     Solar_Thermal_Energy, State_Of_Charge_Tank, Maximun_Tank_Charge, Maximum_Boiler_Energy, \
     NG_Consumption, Maximum_Resistance_Thermal_Energy, Thermal_Energy_Balance, Total_Electrical_Resistance_Demand, SC_Financial_Cost, \
-    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, NG_Cost_Total , Minimun_Tank_Charge, '''Max_Power_Tank_Discharge, \
-    Max_Tank_out'''
+    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, NG_Cost_Total , Minimun_Tank_Charge, '''Max_Power_Tank_Discharge, Max_Tank_out'''
     
     
     # OBJETIVE FUNTION:
@@ -61,8 +60,8 @@ def Model_Resolution(model,datapath="Example/data.dat"):
     model.StateOfChargeTank = Constraint(model.scenario, model.classes, model.periods, rule =State_Of_Charge_Tank)
     model.MaximumTankCharge = Constraint(model.scenario, model.classes, model.periods, rule =Maximun_Tank_Charge)
     model.MinimunTankCharge = Constraint(model.scenario, model.classes, model.periods, rule =Minimun_Tank_Charge)
-    model.MaxPowerTankDischarge = Constraint(model.classes, rule =Max_Power_Tank_Discharge)
-    model.MaxTankout = Constraint(model.scenario, model.classes, model.periods, rule =Max_Tank_out)
+   # model.MaxPowerTankDischarge = Constraint(model.classes, rule =Max_Power_Tank_Discharge)
+   # model.MaxTankout = Constraint(model.scenario, model.classes, model.periods, rule =Max_Tank_out)
     
     # Boiler Constraints     
     model.MaximumBoilerEnergy = Constraint(model.scenario, model.classes, model.periods, rule =Maximum_Boiler_Energy) 
