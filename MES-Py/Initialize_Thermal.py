@@ -59,7 +59,7 @@ def Initialize_PV_Energy(model, i, t):
     
     :return: The energy yield of one PV for the period t.
     '''
-    return float(PV_Energy[i][t])
+    return float(PV_Energy [i][t])
 
 SC_Energy = pd.read_csv('Inputs/SC_Output.csv') # # open the SC energy yield file
 

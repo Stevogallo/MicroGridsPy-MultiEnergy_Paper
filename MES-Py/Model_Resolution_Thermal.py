@@ -25,7 +25,9 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     Initial_Inversion, Operation_Maintenance_Cost, Total_Finalcial_Cost, Battery_Reposition_Cost, Maximun_Diesel_Energy, Diesel_Comsuption,Diesel_Cost_Total, \
     Solar_Thermal_Energy, State_Of_Charge_Tank, Maximun_Tank_Charge, Maximum_Boiler_Energy, \
     NG_Consumption, Maximum_Resistance_Thermal_Energy, Thermal_Energy_Balance, Total_Electrical_Resistance_Demand, SC_Financial_Cost, \
-    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, NG_Cost_Total , Minimun_Tank_Charge, '''Max_Power_Tank_Discharge, Max_Tank_out'''
+    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, NG_Cost_Total , Minimun_Tank_Charge
+    
+    '''Max_Power_Tank_Discharge, Max_Tank_out'''
     
     
     # OBJETIVE FUNTION:
