@@ -12,7 +12,7 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import matplotlib.ticker as mtick
 import matplotlib.pylab as pylab
-from Model_Creation_Thermal import model.Periods
+from Model_Creation_Thermal import *
 
 def Load_results1(instance):
     '''

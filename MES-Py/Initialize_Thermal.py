@@ -48,7 +48,7 @@ def Initialize_Thermal_Demand(model, i, c, t):
     return float(Thermal_Energy_Demand[column][t])
 
 
-PV_Energy = pd.read_csv('Inputs/PV_Energy.csv') # open the PV energy yield file
+PV_Energy = pd.read_csv('Inputs/PV_Output.csv') # open the PV energy yield file
 
 def Initialize_PV_Energy(model, i, t):
     '''
@@ -61,7 +61,7 @@ def Initialize_PV_Energy(model, i, t):
     '''
     return float(PV_Energy[i][t])
 
-SC_Energy = pd.read_csv('Inputs/SC_Energy.csv') # # open the SC energy yield file
+SC_Energy = pd.read_csv('Inputs/SC_Output.csv') # # open the SC energy yield file
 
 def Initialize_SC_Energy(model, i, c, t):
     '''

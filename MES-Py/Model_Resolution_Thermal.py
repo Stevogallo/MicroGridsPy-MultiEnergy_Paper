@@ -24,9 +24,9 @@ def Model_Resolution(model,datapath="Example/data.dat"):
     Financial_Cost, Energy_balance, Maximun_Lost_Load, Maximun_Lost_Load_Th, Scenario_Net_Present_Cost, Scenario_Lost_Load_Cost, Scenario_Lost_Load_Cost_Th, \
     Initial_Inversion, Operation_Maintenance_Cost, Total_Finalcial_Cost, Battery_Reposition_Cost, Maximun_Diesel_Energy, Diesel_Comsuption,Diesel_Cost_Total, \
     Solar_Thermal_Energy, State_Of_Charge_Tank, Maximun_Tank_Charge, Maximum_Boiler_Energy, \
-    NG_Consumption, Maximum_Resistance_Thermal_Energy, Total_Thermal_Energy_Demand, Thermal_Energy_Balance, Total_Electrical_Resistance_Demand, SC_Financial_Cost, \
-    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, NG_Cost_Total , Minimun_Tank_Charge, Max_Power_Tank_Discharge, \
-    Max_Tank_out
+    NG_Consumption, Maximum_Resistance_Thermal_Energy, Thermal_Energy_Balance, Total_Electrical_Resistance_Demand, SC_Financial_Cost, \
+    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, NG_Cost_Total , Minimun_Tank_Charge, '''Max_Power_Tank_Discharge, \
+    Max_Tank_out'''
     
     
     # OBJETIVE FUNTION:
@@ -39,7 +39,6 @@ def Model_Resolution(model,datapath="Example/data.dat"):
     model.MaximunLostLoadTh = Constraint(model.scenario, model.classes, rule=Maximun_Lost_Load_Th) # Maximum permissible lost load
     model.ScenarioLostLoadCost = Constraint(model.scenario, rule=Scenario_Lost_Load_Cost)
     model.ScenarioLostLoadCostTh = Constraint(model.scenario, rule=Scenario_Lost_Load_Cost_Th)
-    model.TotalThermalEnergyDemand = Constraint(model.scenario, model.classes, model.periods, rule=Total_Thermal_Energy_Demand)
     model.ThermalEnergyBalance = Constraint(model.scenario, model.classes, model.periods, rule=Thermal_Energy_Balance)
     model.TotalElectricalResistanceDemand = Constraint(model.scenario, model.periods, rule=Total_Electrical_Resistance_Demand)
 
