@@ -55,9 +55,9 @@ def State_of_Charge(model,i, t): # State of Charge of the battery
     :param model: Pyomo model as defined in the Model_creation library.
     '''
     if t==1: # The state of charge (State_Of_Charge) for the period 0 is equal to the Battery size.
-        return model.State_Of_Charge_Battery[i,t] == model.Battery_Nominal_Capacity*1 - model.Energy_Battery_Flow_Out[i,t]*model.Delta_Time/model.Discharge_Battery_Efficiency + model.Energy_Battery_Flow_In[i,t]*model.Charge_Battery_Efficiency
+        return model.State_Of_Charge_Battery[i,t] == model.Battery_Nominal_Capacity*1 - model.Energy_Battery_Flow_Out[i,t]*model.Delta_Time/model.Discharge_Battery_Efficiency + model.Energy_Battery_Flow_In[i,t]*model.Delta_Time*model.Charge_Battery_Efficiency
     if t>1:  
-        return model.State_Of_Charge_Battery[i,t] == model.State_Of_Charge_Battery[i,t-1] - model.Energy_Battery_Flow_Out[i,t]*model.Delta_Time/model.Discharge_Battery_Efficiency + model.Energy_Battery_Flow_In[i,t]*model.Charge_Battery_Efficiency    
+        return model.State_Of_Charge_Battery[i,t] == model.State_Of_Charge_Battery[i,t-1] - model.Energy_Battery_Flow_Out[i,t]*model.Delta_Time/model.Discharge_Battery_Efficiency + model.Energy_Battery_Flow_In[i,t]*model.Delta_Time*model.Charge_Battery_Efficiency    
 
 def Maximun_Charge(model, i, t): # Maximun state of charge of the Battery
     '''
@@ -127,10 +127,10 @@ def State_Of_Charge_Tank (model,i,c,t): # State of Charge (SOC) of the thermal s
      :param model: Pyomo model as defined in the Model_creation library.
      '''
     if t==1: # SOC_Tank  for the period 0 is equal to the Tank size.
-        return model.SOC_Tank[i,c,t] == model.Tank_Nominal_Capacity[c]*1 + model.Total_Energy_SC [i,c,t] *model.Delta_Time + model.Resistance_Thermal_Energy [i,c,t]*model.Electric_Resistance_Efficiency *model.Delta_Time - model.Energy_Tank_Flow_Out[i,c,t]*model.Delta_Time 
+        return model.SOC_Tank[i,c,t] == model.Tank_Nominal_Capacity[c]*1 + model.Total_Energy_SC[i,c,t]*model.Delta_Time + model.Resistance_Thermal_Energy[i,c,t]*model.Electric_Resistance_Efficiency*model.Delta_Time - model.Energy_Tank_Flow_Out[i,c,t]*model.Delta_Time 
 
     if t>1:  
-        return model.SOC_Tank [i,c,t] == model.SOC_Tank[i,c,t-1]*model.Tank_Efficiency + model.Total_Energy_SC [i,c,t]*model.Delta_Time + model.Resistance_Thermal_Energy [i,c,t]*model.Electric_Resistance_Efficiency*model.Delta_Time - model.Energy_Tank_Flow_Out[i,c,t]*model.Delta_Time 
+        return model.SOC_Tank [i,c,t] == model.SOC_Tank[i,c,t-1]*model.Tank_Efficiency + model.Total_Energy_SC[i,c,t]*model.Delta_Time + model.Resistance_Thermal_Energy[i,c,t]*model.Electric_Resistance_Efficiency*model.Delta_Time - model.Energy_Tank_Flow_Out[i,c,t]*model.Delta_Time 
 
 
 def Maximun_Tank_Charge(model,i,c,t): # Maximun state of charge of the Tank in terms of thermal energy
@@ -151,23 +151,23 @@ def Minimun_Tank_Charge(model,i,c,t): # Minimun state of charge
     '''
     return model.SOC_Tank [i,c,t] >= model.Tank_Nominal_Capacity[c]*model.Deep_of_Tank_Discharge
 
-# def Max_Power_Tank_Discharge(model,c):
-#     '''
-#     This constraint calculates the Maximum power of discharge of the tank. for 
-#     each scenario i.
+def Max_Power_Tank_Discharge(model,c):
+    '''
+    This constraint calculates the Maximum power of discharge of the tank. for 
+    each scenario i.
     
-#     :param model: Pyomo model as defined in the Model_creation library.
-#     '''
-#     return model.Maximun_Tank_Discharge_Power[c] == model.Tank_Nominal_Capacity[c]/(model.Maximun_Tank_Discharge_Time)
+    :param model: Pyomo model as defined in the Model_creation library.
+    '''
+    return model.Maximun_Tank_Discharge_Power[c] == model.Tank_Nominal_Capacity[c]/(model.Maximun_Tank_Discharge_Time)
 
-# def Max_Tank_out(model,i,c, t): #minimun flow of energy for the discharge fase
-#     '''
-#     This constraint maintains the energy from the tank, below the maximum power of 
-#     discharge of the battery for each scenario i.
+def Max_Tank_out(model,i,c, t): #minimun flow of energy for the discharge fase
+    '''
+    This constraint maintains the energy from the tank, below the maximum power of 
+    discharge of the battery for each scenario i.
     
-#     :param model: Pyomo model as defined in the Model_creation library.
-#     '''
-#     return model.Energy_Tank_Flow_Out[i,c,t] <= model.Maximun_Tank_Discharge_Power[c]
+    :param model: Pyomo model as defined in the Model_creation library.
+    '''
+    return model.Energy_Tank_Flow_Out[i,c,t] <= model.Maximun_Tank_Discharge_Power[c]
 
 
 ################################### Electrical Resistance #####################################################
