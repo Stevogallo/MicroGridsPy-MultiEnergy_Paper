@@ -7,7 +7,7 @@ Created on Wed Mar  7 19:27:29 2018
 
 
 import pandas as pd
-from pyomo.environ import  AbstractModel
+from pyomo.environ import AbstractModel
 
 from Results_Thermal import Plot_Energy_Total, Load_results1, Load_results2, Load_Thermal_Results1, Load_results1_binary, Load_results2_binary, Percentage_Of_Use, Energy_Flow, Energy_Participation, LDR, Load_results1_Integer, Load_results2_Integer 
 from Model_Creation_Thermal import Model_Creation

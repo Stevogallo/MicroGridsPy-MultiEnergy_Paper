@@ -248,7 +248,7 @@ def Maximun_Lost_Load_Th(model,i,c): # Maximum permissible lost load thermal
     
     :param model: Pyomo model as defined in the Model_creation library.
     '''
-    return model.Lost_Load_Probability*sum(model.Total_Thermal_Energy_Demand[i,c,t] for t in model.periods) >= sum(model.Lost_Load_Th[i,c,t] for t in model.periods)
+    return model.Lost_Load_Probability*sum(model.Thermal_Energy_Demand[i,c,t] for t in model.periods) >= sum(model.Lost_Load_Th[i,c,t] for t in model.periods)
 ######################################## Diesel generator constraints #################################################################
 
 def Maximun_Diesel_Energy(model,i, t): # Maximun energy output of the diesel generator

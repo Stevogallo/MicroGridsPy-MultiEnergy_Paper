@@ -18,8 +18,9 @@ def Initialize_years(model, i):
     '''    
     return i
 
-Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv') # open the electric demand demand file
-
+Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', index_col = 0) # open the electric demand demand file
+Energy_Demand = Energy_Demand/1000
+Energy_Demand = round(Energy_Demand, 1)
 
 def Initialize_Demand(model, i, t):
     '''
@@ -30,9 +31,11 @@ def Initialize_Demand(model, i, t):
     :return: The energy demand for the period t.     
         
     '''
-    return float(Energy_Demand[i][t])
+    return float(Energy_Demand.iloc[t-1,i-1])
 
-Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv') # open the energy thermal demand file
+Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', index_col = 0) # open the energy thermal demand file
+Thermal_Energy_Demand = Thermal_Energy_Demand/1000
+Thermal_Energy_Demand = round(Thermal_Energy_Demand, 1)
 
 def Initialize_Thermal_Demand(model, i, c, t):
     '''
@@ -45,10 +48,12 @@ def Initialize_Thermal_Demand(model, i, c, t):
     '''
     column=i*c;
     
-    return float(Thermal_Energy_Demand[column][t])
+    return float(Thermal_Energy_Demand.iloc[t-1,column-1])
 
 
-PV_Energy = pd.read_csv('Inputs/PV_Output.csv') # open the PV energy yield file
+PV_Energy = pd.read_csv('Inputs/PV_Output.csv', index_col = 0) # open the PV energy yield file
+PV_Energy = PV_Energy/1000
+PV_Energy = round(PV_Energy, 1)
 
 def Initialize_PV_Energy(model, i, t):
     '''
@@ -59,9 +64,11 @@ def Initialize_PV_Energy(model, i, t):
     
     :return: The energy yield of one PV for the period t.
     '''
-    return float(PV_Energy [i][t])
+    return float(PV_Energy.iloc[t-1,i-1])
 
-SC_Energy = pd.read_csv('Inputs/SC_Output.csv') # # open the SC energy yield file
+SC_Energy = pd.read_csv('Inputs/SC_Output.csv', index_col=0) # # open the SC energy yield file
+SC_Energy = SC_Energy/1000
+SC_Energy = round(SC_Energy, 1)
 
 def Initialize_SC_Energy(model, i, c, t):
     '''
@@ -74,7 +81,7 @@ def Initialize_SC_Energy(model, i, c, t):
     '''
     column=i*c;
     
-    return float(SC_Energy[column] [t])
+    return float(SC_Energy.iloc[t-1,column-1])
 
 def Marginal_Cost_Generator_1(model):
     
