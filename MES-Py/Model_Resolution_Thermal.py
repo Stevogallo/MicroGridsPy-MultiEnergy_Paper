@@ -90,9 +90,22 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     model.BatteryRepositionCost = Constraint(rule=Battery_Reposition_Cost) 
 
     
-    instance = model.create_instance(datapath) # load parameters       
-    opt = SolverFactory('cplex') # Solver use during the optimization    
-    results = opt.solve(instance, tee=True) # Solving a model instance 
+    print('Model_Resolution: Constraints imported')
+    
+    instance = model.create_instance(datapath) # load parameters
+
+    print('Model_Resolution: Instance created')
+    
+    opt = SolverFactory('gurobi')# # Solver use during the optimization    
+    opt.set_options('Method=2 Crossover=0 BarConvTol=1e-4 OptimalityTol=1e-4 FeasibilityTol=1e-4 IterationLimit=1000')
+	
+    print('Model_Resolution: Solver called')
+    
+    results = opt.solve(instance, tee=True)# Solving a model instance 
+    
+    print('Model_Resolution: instance solved')
+
     instance.solutions.load_from(results)  # Loading solution into instance
     return instance
+
     
