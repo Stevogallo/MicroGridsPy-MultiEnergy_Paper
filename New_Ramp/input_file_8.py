@@ -8,6 +8,9 @@ Created on Fri Oct 26 14:59:08 2018
 #%% Definition of the inputs
 '''
 Data from Field Campaign Pistolese-Stevanato 2017
+
+School
+365 days
 '''
 
 
