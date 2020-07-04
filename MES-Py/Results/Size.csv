@@ -1,0 +1,20 @@
+,0
+Amortization,7.56805245538
+Size of the solar panels,0.0
+Size of the Battery,0.00121146784522
+NPC,257.198943763
+% Financimiento,0.55
+Discount Rate,0.025
+Interest Rate,0.07
+Price PV,1.67
+Price Battery,0.6
+OyM,0.015
+Years,20.0
+Initial Inversion,65.5985908825
+O&M,34.0875692993
+Total Financial Cost,117.979597913
+Battery Reposition Cost,0.000567838046655
+VOLL,0.0003
+Size Generator,93.304560389
+Diesel Cost,0.9
+Price Generator,1.48
