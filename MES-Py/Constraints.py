@@ -12,6 +12,8 @@ Authors:
                         San Simon University, Centro Universitario de Investigacion en Energia, Cochabamba, Bolivia
 """
 
+import warnings
+warnings.filterwarnings("ignore")
 
 #%% Objective funtion
 

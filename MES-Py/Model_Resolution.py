@@ -16,6 +16,17 @@ Authors:
 from pyomo.opt import SolverFactory
 from pyomo.environ import Objective, minimize, Constraint
 
+import warnings
+warnings.filterwarnings("ignore")
+
+from Constraints import  Net_Present_Cost, RES_Electric_Energy_Generation, Battery_State_of_Charge,\
+Maximum_Battery_Charge, Minimum_Battery_Charge, Max_Power_Battery_Charge, Max_Power_Battery_Discharge, Max_Battery_Energy_Inflow, Min_Battery_Energy_Outflow, \
+Loan_Financial_Cost, Electric_Energy_balance, Maximum_Lost_Load_EE, Maximun_Lost_Load_Th, Scenario_Net_Present_Cost, Scenario_Lost_Load_Cost_EE, Scenario_Lost_Load_Cost_Th, \
+Initial_Investment_Cost, Operation_Maintenance_Cost, Total_Financial_Cost, Battery_Replacement_Cost, Maximum_Diesel_Energy, Diesel_Comsuption,Total_Diesel_Cost, \
+Solar_Thermal_Energy_Generation, Tank_State_Of_Charge, Maximun_Tank_Charge, Maximum_Boiler_Energy, \
+NG_Consumption, Maximum_Resistance_Thermal_Energy, Thermal_Energy_Balance, Total_Electrical_Resistance_Demand, SC_Financial_Cost, \
+Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, Total_NG_Cost , Minimun_Tank_Charge, Max_Power_Tank_Discharge, Min_Tank_Energy_Outflow
+
 
 def Model_Resolution(model,datapath="Inputs/data.dat"):   
     
@@ -27,15 +38,6 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     
     :return: The solution inside an object called instance.
     '''
-    
-    from Constraints import  Net_Present_Cost, RES_Electric_Energy_Generation, Battery_State_of_Charge,\
-    Maximum_Battery_Charge, Minimum_Battery_Charge, Max_Power_Battery_Charge, Max_Power_Battery_Discharge, Max_Battery_Energy_Inflow, Min_Battery_Energy_Outflow, \
-    Loan_Financial_Cost, Electric_Energy_balance, Maximum_Lost_Load_EE, Maximun_Lost_Load_Th, Scenario_Net_Present_Cost, Scenario_Lost_Load_Cost_EE, Scenario_Lost_Load_Cost_Th, \
-    Initial_Investment_Cost, Operation_Maintenance_Cost, Total_Financial_Cost, Battery_Replacement_Cost, Maximum_Diesel_Energy, Diesel_Comsuption,Total_Diesel_Cost, \
-    Solar_Thermal_Energy_Generation, Tank_State_Of_Charge, Maximun_Tank_Charge, Maximum_Boiler_Energy, \
-    NG_Consumption, Maximum_Resistance_Thermal_Energy, Thermal_Energy_Balance, Total_Electrical_Resistance_Demand, SC_Financial_Cost, \
-    Tank_Financial_Cost, Boiler_Financial_Cost , Resistance_Financial_Cost, Total_NG_Cost , Minimun_Tank_Charge, Max_Power_Tank_Discharge, Min_Tank_Energy_Outflow
-    
     
     # OBJETIVE FUNTION:
     model.ObjectiveFuntion = Objective(rule=Net_Present_Cost, sense=minimize)  

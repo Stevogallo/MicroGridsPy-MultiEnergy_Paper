@@ -13,6 +13,9 @@ Authors:
 """
 
 from pyomo.environ import  Param, RangeSet, NonNegativeReals, Var
+import warnings
+warnings.filterwarnings("ignore")
+
 from Initialize import Initialize_years, Initialize_Electric_Energy_Demand, Initialize_RES_Energy, Initialize_SC_Energy, Initialize_Thermal_Energy_Demand # Import library with initialitation funtions for the parameters
 
 ## Thermal Model ##

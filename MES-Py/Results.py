@@ -19,6 +19,10 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import matplotlib.ticker as mtick
 
+import warnings
+warnings.filterwarnings("ignore")
+
+
 #%%
 def Load_results1(instance):
     '''

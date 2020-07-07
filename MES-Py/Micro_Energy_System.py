@@ -14,6 +14,8 @@ Authors:
 
 import time
 from pyomo.environ import AbstractModel
+import warnings
+warnings.filterwarnings("ignore")
 
 from Results import Plot_Energy_Total, Load_results1, Load_results2, Load_Thermal_Results1, Percentage_Of_Use, Energy_Flow, Energy_Participation, LDR
 from Model_Creation import Model_Creation
