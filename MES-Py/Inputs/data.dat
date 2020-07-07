@@ -1,98 +1,85 @@
-param: Periods := 525600;
+param: Periods := 100;                                  # Number of periods per year of analysis of the energy variables
+param: Years := 20;                                     # Number of years of the project
+param: StartDate := '01/01/2011 00:00:00';              # Start date and time of the project
+param: PlotTime := 1;                                   # Quantity of days that are going to be plot
+param: PlotDay := '01/01/2011 01:00:00';                # Start day for the plot
+param: PlotScenario := 1;                               # Scenario for the plot
+param: Delta_Time := 1/60;                              # Time step in hours
 
-param: Years := 20;
 
-param: StartDate := '01/01/2011 00:00:00';
+param: Discount_Rate := 0.025;                          # Discount rate of the project in %
+param: Percentage_Funded := 0;                          # % of the total investment that is funded by a bank or another entity in %
+param: Interest_Rate_Loan := 0.07;                       # Interest rate of the loan in %
 
-param: PlotTime := 1;
 
-param: PlotDay := '01/01/2011 01:00:00';
+param: Scenarios :=1;                                   # Number of scenarios
+param: Scenario_Weight :=                           
+1   1;                                                  # Probability of occurrance of each scenario
 
-param: PlotScenario := 1;
+param: Classes := 4;                                    # Number of classes of users for the thermal part
 
-param: Delta_Time := 1/60;
 
-param: PV_Nominal_Capacity := 300;
+param: RES_Nominal_Capacity := 300;                     # Nominal capacity of the RES in W/unit
+param: RES_Inverter_Efficiency := 0.986;                # Efficiency of the inverter in %
+param: RES_Invesment_Cost := 1.67;                      # Investment cost of RES unit in USD/W
+param: RES_Maintenance_Operation_Cost := 0.015;         # % of the total investment spend in operation and management of RES unit in each period 
 
-param: Inverter_Efficiency := 0.986;
 
-param: PV_invesment_Cost := 1.67;
+param: SC_Nominal_Capacity := 1825;                     # Nominal capacity of the Solar Collectors in W
+param: SC_Investment_Cost := 0.42;                      # Investment cost of SC in USD/W
+param: SC_Maintenance_Operation_Cost := 0.015;          # % of the total investment spend in operation and management of SC unit in each period
 
-param: SC_Nominal_Capacity := 1825;
 
-param: SC_investment_Cost := 0.42;
+param: Discharge_Battery_Efficiency := 0.95;            # Efficiency of the discharge of the battery in %
+param: Charge_Battery_Efficiency := 0.95;               # Efficiency of the charge of the battery in %
+param: Battery_Depth_of_Discharge := 0.2;               # Depth of discharge of the battery in %
+param: Maximum_Battery_Discharge_Time := 5;             # Maximum time of discharge of the battery in hours
+param: Maximum_Battery_Charge_Time := 5;                # Maximum time of charge of the battery in hours
+param: Battery_Replacement_Time := 10;                  # Period of replacement of the battery in years
+param: Battery_Invesment_Cost := 0.6;                   # Investment cost of battery in USD/Wh
+param: Battery_Maintenance_Operation_Cost:= 0.015;      # % of the total investment spend in operation and management of battery unit in each period
 
-param: Discharge_Battery_Efficiency := 0.95;
 
-param: Charge_Battery_Efficiency := 0.95;
+param: Tank_Efficiency := 0.99;                         # Efficiency of the tank %  
+param: Tank_Depth_of_Discharge := 0.2;                  # Depth of discharge of the tank in %
+param: Maximum_Tank_Discharge_Time:= 2.5;               # Maximum time of discharge of the tank in hours
+param: Tank_Invesment_Cost := 0.036;                    # Investment cost of unit tank USD/W
+param: Tank_Maintenance_Operation_Cost := 0.015;        # % of the total investment spend in operation and management of tank unit in each period
 
-param: Deep_of_Discharge := 0.2;
 
-param: Deep_of_Tank_Discharge := 0.2;
+param: Generator_Efficiency := 0.3;                     # Generator electric efficiency in %
+param: Lower_Heating_Value := 9890;                     # Lower heating value of the diesel in Wh/L
+param: Diesel_Unitary_Cost := 0.9;                      # Cost of diesel in USD/L
+param: Generator_Invesment_Cost := 1.48;                # Investment cost of the diesel generator in USD/W
+param: Generator_Maintenance_Operation_Cost := 0.015;   # % of the total investment spend in operation and management of diesel generator in each period
 
-param: Maximun_Battery_Discharge_Time := 5;
 
-param: Maximun_Battery_Charge_Time := 5;    
+param: Boiler_Efficiency := 0.87;                       # Boiler efficiency in 
+param: Lower_Heating_Value_NG := 13100;                 # Lower heating value of the natural gas in Wh/L
+param: NG_Unitary_Cost := 2.6;                          # Cost of natural gas in USD/L
+param: Boiler_Invesment_Cost := 0.1;                    # Investment cost of the NG Boiler in USD/W
+param: Boiler_Maintenance_Operation_Cost := 0.015;      # % of the total investment spend in operation and management of boiler in each period
 
-param: Maximun_Tank_Discharge_Time:= 2.5;   
 
-param: Battery_Reposition_Time := 10;
+param: Electric_Resistance_Efficiency := 1;             # Electric resistance efficiency in %
+param: Resistance_Invesment_Cost := 0.1;                # Investment cost of the electric resistance in USD/W
+param: Resistance_Maintenance_Operation_Cost := 0.015;  # % of the total investment spend in operation and management of resistance in each period
 
-param: Battery_Invesment_Cost := 0.6;
 
-param: Tank_Efficiency := 0.99;
+param: Lost_Load_Tolerance := 0.0;                      # Fraction of tolerated lost load in % of the total demand
+param: Value_Of_Lost_Load := 0.0;                       # Value of lost load in USD/Wh
 
-param: Tank_Invesment_Cost := 0.036;
 
-param: Generator_Efficiency := 0.3;
 
-param: Low_Heating_Value := 9890;
 
-param: Diesel_Unitary_Cost := 0.9;
 
-param: Generator_Invesment_Cost := 1.48;
 
-param: Boiler_Efficiency := 0.87;
 
-param: Low_Heating_Value_NG := 13100;
 
-param: NG_Unitary_Cost := 2.6;
 
-param: Boiler_Invesment_Cost := 0.1;
 
-param: Electric_Resistance_Efficiency := 1;
 
-param: Resistance_Invesment_Cost := 0.1;
 
-param: Lost_Load_Probability := 0.01;
 
-param: Value_Of_Lost_Load := 0.0003;
 
-param: Maintenance_Operation_Cost_PV := 0.015;
-
-param: Maintenance_Operation_Cost_Battery:= 0.015;
-
-param: Maintenance_Operation_Cost_Generator := 0.015;
-
-param: Maintenance_Operation_Cost_SC := 0.015;
-
-param: Maintenance_Operation_Cost_Tank := 0.015;
-
-param: Maintenance_Operation_Cost_Boiler := 0.015;
-
-param: Maintenance_Operation_Cost_Resistance := 0.015;
-
-param: Discount_Rate := 0.025;
-
-param: Interest_Rate_Loan := 0.07;
-
-param: Porcentage_Funded := 0.55;
-
-param: Scenarios :=1;
-
-param: Scenario_Weight := 
-
-1   1;
-
-param: Classes := 4;
 
