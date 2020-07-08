@@ -346,14 +346,14 @@ def Initial_Investment_Cost(model):
     This constraint calculates the initial inversion for the system. 
     :param model: Pyomo model as defined in the Model_creation library.
     '''    
-    return model.Initial_Investment_Cost == (model.RES_Units*model.RES_Invesment_Cost*model.RES_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost )*(1-model.Percentage_Funded) 
+    return model.Initial_Investment_Cost == (model.RES_Units*model.RES_Investment_Cost*model.RES_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost )*(1-model.Percentage_Funded) 
                                                                  
 def Operation_Maintenance_Cost(model):
     '''
     This funtion calculates the operation and maintenance for the system. 
     :param model: Pyomo model as defined in the Model_creation library.
     '''    
-    return model.Operation_Maintenance_Cost == sum(((model.RES_Units*model.RES_Invesment_Cost*model.RES_Nominal_Capacity*model.RES_Maintenance_Operation_Cost + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Battery_Maintenance_Operation_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost*model.Generator_Maintenance_Operation_Cost + model.SC_Financial_Cost*model.SC_Maintenance_Operation_Cost + model.Tank_Financial_Cost*model.Tank_Maintenance_Operation_Cost + model.Boiler_Financial_Cost*model.Boiler_Maintenance_Operation_Cost + model.Resistance_Financial_Cost*model.Resistance_Maintenance_Operation_Cost)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years) 
+    return model.Operation_Maintenance_Cost == sum(((model.RES_Units*model.RES_Investment_Cost*model.RES_Nominal_Capacity*model.RES_Maintenance_Operation_Cost + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost*model.Battery_Maintenance_Operation_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost*model.Generator_Maintenance_Operation_Cost + model.SC_Financial_Cost*model.SC_Maintenance_Operation_Cost + model.Tank_Financial_Cost*model.Tank_Maintenance_Operation_Cost + model.Boiler_Financial_Cost*model.Boiler_Maintenance_Operation_Cost + model.Resistance_Financial_Cost*model.Resistance_Maintenance_Operation_Cost)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years) 
                                                                                        
 def Scenario_Lost_Load_Cost_EE(model, i):
     '''
@@ -383,7 +383,7 @@ def Loan_Financial_Cost(model):
     This constraint calculates the yearly payment for the borrow money.
     :param model: Pyomo model as defined in the Model_creation library.
     '''
-    return model.Loan_Financial_Cost == ((model.RES_Units*model.RES_Invesment_Cost*model.RES_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost)*model.Percentage_Funded*model.Interest_Rate_Loan)/(1-((1+model.Interest_Rate_Loan)**(-model.Years)))
+    return model.Loan_Financial_Cost == ((model.RES_Units*model.RES_Investment_Cost*model.RES_Nominal_Capacity + model.Battery_Nominal_Capacity*model.Battery_Invesment_Cost + model.Generator_Nominal_Capacity*model.Generator_Invesment_Cost + model.SC_Financial_Cost + model.Tank_Financial_Cost + model.Boiler_Financial_Cost + model.Resistance_Financial_Cost)*model.Percentage_Funded*model.Interest_Rate_Loan)/(1-((1+model.Interest_Rate_Loan)**(-model.Years)))
   
 def Total_Financial_Cost(model):
     '''

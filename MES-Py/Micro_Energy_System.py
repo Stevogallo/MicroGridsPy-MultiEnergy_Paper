@@ -15,26 +15,22 @@ Authors:
 import time
 from pyomo.environ import AbstractModel
 
-from Results import TimeSeries
+from Results import TimeSeries, EnergySystem
 from Model_Creation import Model_Creation
 from Model_Resolution import Model_Resolution
 
-
 start = time.time()
-
 
 model = AbstractModel() # define type of optimization problem
 
-# Optimization model
+#%% Optimization model
 Model_Creation(model) # Creation of the Sets, parameters and variables.
 instance = Model_Resolution(model) # Resolution of the instance
 
-## Upload the resulst from the instance and saving it in excel files
+#%% Result export
 TimeSeries = TimeSeries(instance) # Extract the results of energy from the instance and save it in a excel file 
+EnergySystemSize = EnergySystem(instance)
 
-
-# Scenarios_Classes = Load_Thermal_Results1(instance)
-# Results = Load_results2(instance) # Save results into a excel file
 
 # # Post procesing tools
 # Plot_Energy_Total(instance, Time_Series)
