@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import matplotlib.ticker as mtick
+import os
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -35,6 +36,9 @@ def TimeSeries(instance):
     nP = int(instance.Periods.extract_values()[None])
     nY = int(instance.Years.extract_values()[None])
     nC = int(instance.Classes.extract_values()[None])
+
+    StartDate = instance.StartDate.extract_values()[None]
+    dateInd = pd.DatetimeIndex(start=StartDate, periods=nP, freq='1min')
     
     #%% Electricity Balance
     EE_Demand      = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index')
@@ -58,6 +62,7 @@ def TimeSeries(instance):
     Tank_SoC        = pd.DataFrame.from_dict(instance.Tank_State_of_Charge.get_values(), orient='index')
     NG_Cons         = pd.DataFrame.from_dict(instance.NG_Consumption.get_values(), orient='index')
 
+    #%% Preparing for export
     EE_TimeSeries = {}
     Th_TimeSeries = {}
     
@@ -65,7 +70,12 @@ def TimeSeries(instance):
         
        EE_TimeSeries[s] = pd.concat([EE_Demand.iloc[s*nP:(s*nP+nP),:], EE_Lost_Load.iloc[s*nP:(s*nP+nP),:], EE_RES_Prod.iloc[s*nP:(s*nP+nP),:], EE_Bat_Inflow.iloc[s*nP:(s*nP+nP),:], EE_Bat_Outflow.iloc[s*nP:(s*nP+nP),:], EE_Curtailment.iloc[s*nP:(s*nP+nP),:], EE_Gen_Prod.iloc[s*nP:(s*nP+nP),:], Bat_SoC.iloc[s*nP:(s*nP+nP),:], Diesel_Cons.iloc[s*nP:(s*nP+nP),:]], axis=1)
        EE_TimeSeries[s].columns = ['Demand','Lost Load', 'RES production', 'Bat Inflow', 'Bat Outflow', 'Curtailment', 'Genset production', 'Bat SoC', 'Diesel consumption']
+       EE_TimeSeries[s].index = dateInd
        EE_TimeSeries['Sc'+str(s+1)] = EE_TimeSeries.pop(s)
+       EE_path = 'Results/TimeSeries/Sc'+str(s+1)
+       if not os.path.exists(EE_path):
+           os.makedirs(EE_path)
+       EE_TimeSeries['Sc'+str(s+1)].to_csv(EE_path+'/EE_TimeSeries.csv')
        
        Th_TimeSeries[s] = {}
        
@@ -73,11 +83,18 @@ def TimeSeries(instance):
     
            Th_TimeSeries[s][c] = pd.concat([Th_Demand.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Lost_Load.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_SC_Prod.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Boiler_Prod.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Tank_Outflow.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Curtailment.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Resist_En.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Tank_SoC.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], NG_Cons.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:]], axis=1)
            Th_TimeSeries[s][c].columns = ['Demand','Lost Load', 'SC production', 'Boiler production', 'Tank Outflow', 'Curtailment', 'Resistance Energy', 'Tank SoC', 'NG consumption']
+           Th_TimeSeries[s][c].index = dateInd
            Th_TimeSeries[s]['Class'+str(c+1)] = Th_TimeSeries[s].pop(c)
-    
+           
        Th_TimeSeries['Sc'+str(s+1)] = Th_TimeSeries.pop(s)
+   
+       for c in range(nC):
+           Th_path = 'Results/TimeSeries/Sc'+str(s+1)
+           if not os.path.exists(EE_path):
+               os.makedirs(EE_path)
+           Th_TimeSeries['Sc'+str(s+1)]['Class'+str(c+1)].to_csv(Th_path+'/Th_TimeSeries_Class'+str(c+1)+'.csv')
     
-        
+                                                                  
     TimeSeries = {
                   'EE': EE_TimeSeries,
                   'Th': Th_TimeSeries

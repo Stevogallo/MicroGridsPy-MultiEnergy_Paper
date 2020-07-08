@@ -31,6 +31,8 @@ instance = Model_Resolution(model) # Resolution of the instance
 
 ## Upload the resulst from the instance and saving it in excel files
 TimeSeries = TimeSeries(instance) # Extract the results of energy from the instance and save it in a excel file 
+
+
 # Scenarios_Classes = Load_Thermal_Results1(instance)
 # Results = Load_results2(instance) # Save results into a excel file
 
