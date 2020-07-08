@@ -16,8 +16,6 @@ Authors:
 from pyomo.opt import SolverFactory
 from pyomo.environ import Objective, minimize, Constraint
 
-import warnings
-warnings.filterwarnings("ignore")
 
 from Constraints import  Net_Present_Cost, RES_Electric_Energy_Generation, Battery_State_of_Charge,\
 Maximum_Battery_Charge, Minimum_Battery_Charge, Max_Power_Battery_Charge, Max_Power_Battery_Discharge, Max_Battery_Energy_Inflow, Min_Battery_Energy_Outflow, \

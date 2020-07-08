@@ -15,8 +15,6 @@ Authors:
 
 import pandas as pd
 
-import warnings
-warnings.filterwarnings("ignore")
 
 #%%
 def Initialize_years(model,i):

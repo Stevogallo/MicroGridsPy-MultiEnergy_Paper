@@ -14,10 +14,8 @@ Authors:
 
 import time
 from pyomo.environ import AbstractModel
-import warnings
-warnings.filterwarnings("ignore")
 
-from Results import Plot_Energy_Total, Load_results1, Load_results2, Load_Thermal_Results1, Percentage_Of_Use, Energy_Flow, Energy_Participation, LDR
+from Results import TimeSeries
 from Model_Creation import Model_Creation
 from Model_Resolution import Model_Resolution
 
@@ -27,17 +25,17 @@ start = time.time()
 
 model = AbstractModel() # define type of optimization problem
 
-
 # Optimization model
 Model_Creation(model) # Creation of the Sets, parameters and variables.
 instance = Model_Resolution(model) # Resolution of the instance
-## Upload the resulst from the instance and saving it in excel files
-Time_Series,Scenarios = Load_results1(instance) # Extract the results of energy from the instance and save it in a excel file 
-Scenarios_Classes = Load_Thermal_Results1(instance)
-Results = Load_results2(instance) # Save results into a excel file
 
-# Post procesing tools
-Plot_Energy_Total(instance, Time_Series)
+## Upload the resulst from the instance and saving it in excel files
+TimeSeries = TimeSeries(instance) # Extract the results of energy from the instance and save it in a excel file 
+# Scenarios_Classes = Load_Thermal_Results1(instance)
+# Results = Load_results2(instance) # Save results into a excel file
+
+# # Post procesing tools
+# Plot_Energy_Total(instance, Time_Series)
 
 
 #PercentageOfUse = Percentage_Of_Use(Time_Series) # Plot the percentage of use 
