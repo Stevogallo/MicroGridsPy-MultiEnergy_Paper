@@ -1,8 +1,8 @@
 param: Periods := 525600;                                  # Number of periods per year of analysis of the energy variables
 param: Years := 20;                                     # Number of years of the project
-param: StartDate := '01/01/2011 00:00:00';              # Start date and time of the project
+param: StartDate := '01/01/2017 00:00:00';              # Start date and time of the project
 param: PlotTime := 1;                                   # Quantity of days that are going to be plot
-param: PlotDay := '01/01/2011 01:00:00';                # Start day for the plot
+param: PlotDay := '01/01/2017 01:00:00';                # Start day for the plot
 param: PlotScenario := 1;                               # Scenario for the plot
 param: Delta_Time := 1/60;                              # Time step in hours
 
@@ -12,7 +12,7 @@ param: Percentage_Funded := 0;                          # % of the total investm
 param: Interest_Rate_Loan := 0.07;                      # Interest rate of the loan in %
 
 
-param: Scenarios :=1;                                   # Number of scenarios
+param: Scenarios := 1;                                  # Number of scenarios
 param: Scenario_Weight :=                           
 1   1;                                                  # Probability of occurrance of each scenario
 
