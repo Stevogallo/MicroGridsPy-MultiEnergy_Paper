@@ -4,7 +4,7 @@ Multi-Energy System (MESpy) model
 Modelling framework for optimization of hybrid electric and thermal small-scale energy systems sizing
 
 Authors: 
-    Stefano Pistolese - 
+    Stefano Pistolese - Department of Energy, Politecnico di Milano, Milan, Italy
     Nicolò Stevanato  - Department of Energy, Politecnico di Milano, Milan, Italy
                         Fondazione Eni Enrico Mattei, Milan, Italy
     Lorenzo Rinaldi   - Department of Energy, Politecnico di Milano, Milan, Italy
@@ -15,7 +15,7 @@ Authors:
 import time
 from pyomo.environ import AbstractModel
 
-from Results import TimeSeries, EnergySystem
+from Results import TimeSeries, EnergySystemInfo
 from Model_Creation import Model_Creation
 from Model_Resolution import Model_Resolution
 
@@ -29,7 +29,7 @@ instance = Model_Resolution(model) # Resolution of the instance
 
 #%% Result export
 TimeSeries = TimeSeries(instance) # Extract the results of energy from the instance and save it in a excel file 
-EnergySystemSize = EnergySystem(instance)
+EnergySystemSize,EnergySystemCost = EnergySystemInfo(instance)
 
 
 # # Post procesing tools

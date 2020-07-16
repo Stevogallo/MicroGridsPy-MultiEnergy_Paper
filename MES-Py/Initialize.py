@@ -4,7 +4,7 @@ Multi-Energy System (MESpy) model
 Modelling framework for optimization of hybrid electric and thermal small-scale energy systems sizing
 
 Authors: 
-    Stefano Pistolese - 
+    Stefano Pistolese - Department of Energy, Politecnico di Milano, Milan, Italy
     Nicolò Stevanato  - Department of Energy, Politecnico di Milano, Milan, Italy
                         Fondazione Eni Enrico Mattei, Milan, Italy
     Lorenzo Rinaldi   - Department of Energy, Politecnico di Milano, Milan, Italy
