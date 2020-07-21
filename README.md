@@ -13,27 +13,27 @@ Main features:
     Determination of the LCOE for the optimal system.
 
 
-### Main developpers
+### Main developers
 
-Francesco Lombardi <br/>
-Politecnico di Milano, Milan <br/>
-E-mail: francesco.lombardi@polimi.it<br/>
-
-Sergio Balderrana <br/>
-University of Liege, Belgium - Universidad Mayor de San Simon, Bolivia <br/>
-E-mail: slbalderrama@doct.ulg.ac.be <br/>
- 
 Nicolò Stevanato <br/>
 Politecnico di Milano, Milan <br/>
 E-mail: nicolo.stevanato@polimi.it <br/>
 
+Lorenzo Rinaldi <br/>
+Politecnico di Milano, Milan <br/>
+E-mail: lorenzo.rinaldi@polimi.it
+
 Stefano Pistolese <br/>
-World Food Program, Rome <br/>
-E-mail: stefano.pistolese@wfp.org <br/>
+Politecnico di Milano, Milan <br/>
+
+Francesco Lombardi <br/>
+Politecnico di Milano, Milan <br/>
+
+Sergio Balderrana <br/>
+University of Liege, Belgium - Universidad Mayor de San Simon, Bolivia <br/>
 
 Sylvain Quoilin <br/>
 University of Liege, Belgium. <br/>
-E-mail: squoilin@ulg.ac.be <br/>
  
 ### Required libraries
 
