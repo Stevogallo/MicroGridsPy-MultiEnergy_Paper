@@ -1,0 +1,65 @@
+param: Periods := 100;                               # Number of periods per year of analysis of the energy variables
+param: Years := 20;                                     # Number of years of the project
+param: StartDate := '01/01/2017 00:00:00';              # Start date and time of the project
+param: PlotTime := 1;                                   # Quantity of days that are going to be plot
+param: PlotDay := '01/01/2017 01:00:00';                # Start day for the plot
+param: PlotScenario := 1;                               # Scenario for the plot
+param: Delta_Time := 1/60;                              # Time step in hours
+
+
+param: Discount_Rate := 0.037;                          # Discount rate of the project in %
+
+
+param: Scenarios := 1;                                  # Number of scenarios
+param: Scenario_Weight :=                           
+1   1;                                                  # Probability of occurrance of each scenario
+
+param: Classes := 4;                                    # Number of classes of users for the thermal part
+
+
+param: RES_Nominal_Capacity := 300;                     # Nominal capacity of the RES in W/unit
+param: RES_Inverter_Efficiency := 0.986;                # Efficiency of the inverter in %
+param: RES_Inv_Specific_Cost := 2;                      # Investment cost of RES unit in USD/W
+param: RES_OM_Specific_Cost := 0.02;                    # % of the total investment spend in operation and management of RES unit in each period 
+
+
+param: BESS_Discharge_Efficiency := 0.95;               # Efficiency of the discharge of the battery in %
+param: BESS_Charge_Efficiency := 0.95;                  # Efficiency of the charge of the battery in %
+param: BESS_Depth_of_Discharge := 0.2;                  # Depth of discharge of the battery in %
+param: BESS_Maximum_Discharge_Time := 5;                # Maximum time of discharge of the battery in hours
+param: BESS_Maximum_Charge_Time := 5;                   # Maximum time of charge of the battery in hours
+param: BESS_Replacement_Time := 20;                     # Period of replacement of the battery in years
+param: BESS_Inv_Specific_Cost := 0.55;                  # Investment cost of battery in USD/Wh
+param: BESS_OM_Specific_Cost := 0.02;                   # % of the total investment spend in operation and management of battery unit in each period
+
+param: Generator_Efficiency := 0.3;                     # Generator electric efficiency in %
+param: Lower_Heating_Value := 9840;                     # Lower heating value of the diesel in Wh/L
+param: Diesel_Unitary_Cost := 1;                        # Cost of diesel in USD/L
+param: Generator_Inv_Specific_Cost := 0.2;              # Investment cost of the diesel generator in USD/W
+param: Generator_OM_Specific_Cost := 0.1;               # % of the total investment spend in operation and management of diesel generator in each period
+
+
+param: Boiler_Efficiency := 0.87;                       # Boiler efficiency in 
+param: Lower_Heating_Value_NG := 10.18;                 # Lower heating value of the natural gas in Wh/L
+param: NG_Unitary_Cost := 0.00202;                      # Cost of natural gas in USD/L
+param: Boiler_Inv_Specific_Cost := 0.1;                 # Investment cost of the NG Boiler in USD/W
+param: Boiler_OM_Specific_Cost := 0.015;                # % of the total investment spend in operation and management of boiler in each period
+
+
+param: EE_Lost_Load_Tolerance := 0.0;                   # Fraction of tolerated electric lost load in % of the total demand
+param: EE_Value_Of_Lost_Load := 0.0;                    # Value of electric lost load in USD/Wh
+param: Th_Lost_Load_Tolerance := 0.01;                  # Fraction of tolerated thermal lost load in % of the total demand
+param: Th_Value_Of_Lost_Load := 0.0;                    # Value of thermal lost load in USD/Wh
+
+
+
+
+
+
+
+
+
+
+
+
+
