@@ -15,7 +15,7 @@ param: Scenario_Weight :=
 1   1;                                                  # Probability of occurrance of each scenario
 
 
-param: Classes := 1;                                    # Number of classes of users for the thermal part
+param: Classes := 4;                                    # Number of classes of users for the thermal part
 
 
 param: Generator_Efficiency := 0.3;                     # Generator electric efficiency in %
