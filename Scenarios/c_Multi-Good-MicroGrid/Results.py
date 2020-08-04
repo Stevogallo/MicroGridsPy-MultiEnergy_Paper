@@ -4,10 +4,10 @@ Multi-Energy System (MESpy) model
 Modelling framework for optimization of hybrid electric and thermal small-scale energy systems sizing
 
 Authors: 
+    Lorenzo Rinaldi   - Department of Energy, Politecnico di Milano, Milan, Italy
     Stefano Pistolese - Department of Energy, Politecnico di Milano, Milan, Italy
     Nicolò Stevanato  - Department of Energy, Politecnico di Milano, Milan, Italy
                         Fondazione Eni Enrico Mattei, Milan, Italy
-    Lorenzo Rinaldi   - Department of Energy, Politecnico di Milano, Milan, Italy
     Sergio Balderrama - Department of Mechanical and Aerospace Engineering, University of Liège, Liège, Belgium
                         San Simon University, Centro Universitario de Investigacion en Energia, Cochabamba, Bolivia
 """
@@ -16,6 +16,8 @@ import pandas as pd
 import numpy as np
 import os
 from pandas import ExcelWriter
+from win32com.client import Dispatch
+import time
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -32,35 +34,31 @@ def TimeSeries(instance):
     StartDate = instance.StartDate.extract_values()[None]
     dateInd = pd.DatetimeIndex(start=StartDate, periods=nP, freq='1min')
 
-    
-    #%% Electricity balance terms
+    "Electricity balance terms"
     EE_Demand      = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index')
     EE_Lost_Load   = pd.DataFrame.from_dict(instance.Lost_Load_EE.get_values(), orient='index')
-    EE_RES_Prod    = pd.DataFrame.from_dict(instance.Total_RES_Energy_Production.get_values(), orient='index')
-    EE_Bat_Inflow  = pd.DataFrame.from_dict(instance.Energy_Battery_Flow_In.get_values(), orient='index')
-    EE_Bat_Outflow = pd.DataFrame.from_dict(instance.Energy_Battery_Flow_Out.get_values(), orient='index')
-    EE_Curtailment = pd.DataFrame.from_dict(instance.Electric_Energy_Curtailment.get_values(), orient='index')
-    EE_Gen_Prod    = pd.DataFrame.from_dict(instance.Total_Generator_Energy_Production.get_values(), orient='index')
+    EE_Curtailment = pd.DataFrame.from_dict(instance.Electric_Curtailment.get_values(), orient='index')
+    EE_RES         = pd.DataFrame.from_dict(instance.RES_Energy_Production.get_values(), orient='index')
+    EE_BESS_Out    = pd.DataFrame.from_dict(instance.BESS_Outflow.get_values(), orient='index')
+    EE_BESS_In     = pd.DataFrame.from_dict(instance.BESS_Inflow.get_values(), orient='index')
+    EE_Gen_Prod    = pd.DataFrame.from_dict(instance.Generator_Energy_Production.get_values(), orient='index')
+    EE_ElRes_Cons  = pd.DataFrame.from_dict(instance.Tot_Electric_Resistance_Energy_Production.get_values(), orient='index')
     # Additional useful terms
-    Bat_SoC        = pd.DataFrame.from_dict(instance.Battery_State_of_Charge.get_values(), orient='index')
     Diesel_Cons    = pd.DataFrame.from_dict(instance.Diesel_Consumption.get_values(), orient='index')
     
-    
-    #%%Thermal energy balance terms
+    "Thermal energy balance terms"
     Th_Demand       = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index')
     Th_Lost_Load    = pd.DataFrame.from_dict(instance.Lost_Load_Th.get_values(), orient='index')
     Th_Curtailment  = pd.DataFrame.from_dict(instance.Thermal_Energy_Curtailment.extract_values(), orient='index')
-    Th_Resist_En    = pd.DataFrame.from_dict(instance.Resistance_Thermal_Energy.extract_values(), orient='index')
+    Th_ElRes_Prod   = pd.DataFrame.from_dict(instance.Electric_Resistance_Energy_Production.get_values(), orient='index')
 
-
-    #%% Preparing for export
+    "Preparing for export"
     EE_TimeSeries = {}
     Th_TimeSeries = {}
     
     for s in range(nS):
-        
-       EE_TimeSeries[s] = pd.concat([EE_Demand.iloc[s*nP:(s*nP+nP),:], EE_Lost_Load.iloc[s*nP:(s*nP+nP),:], EE_RES_Prod.iloc[s*nP:(s*nP+nP),:], EE_Bat_Inflow.iloc[s*nP:(s*nP+nP),:], EE_Bat_Outflow.iloc[s*nP:(s*nP+nP),:], EE_Curtailment.iloc[s*nP:(s*nP+nP),:], EE_Gen_Prod.iloc[s*nP:(s*nP+nP),:], Bat_SoC.iloc[s*nP:(s*nP+nP),:], Diesel_Cons.iloc[s*nP:(s*nP+nP),:]], axis=1)
-       EE_TimeSeries[s].columns = ['Demand','Lost Load', 'RES production', 'Bat Inflow', 'Bat Outflow', 'Curtailment', 'Genset production', 'Bat SoC', 'Diesel consumption']
+       EE_TimeSeries[s] = pd.concat([EE_Demand.iloc[s*nP:(s*nP+nP),:], EE_Lost_Load.iloc[s*nP:(s*nP+nP),:], EE_Curtailment.iloc[s*nP:(s*nP+nP),:], EE_ElRes_Cons.iloc[s*nP:(s*nP+nP),:],  EE_RES.iloc[s*nP:(s*nP+nP),:],  EE_BESS_Out.iloc[s*nP:(s*nP+nP),:], EE_BESS_In.iloc[s*nP:(s*nP+nP),:], EE_Gen_Prod.iloc[s*nP:(s*nP+nP),:], Diesel_Cons.iloc[s*nP:(s*nP+nP),:]], axis=1)
+       EE_TimeSeries[s].columns = ['Demand','Lost Load', 'Curtailment', 'Electric resistance consumption', 'RES production', 'BESS outflow', 'BESS inflow', 'Genset production', 'Diesel consumption']
        EE_TimeSeries[s].index = dateInd
        EE_TimeSeries['Sc'+str(s+1)] = EE_TimeSeries.pop(s)
        EE_path = 'Results/TimeSeries/Sc'+str(s+1)
@@ -71,9 +69,8 @@ def TimeSeries(instance):
        Th_TimeSeries[s] = {}
        
        for c in range(nC):
-    
-           Th_TimeSeries[s][c] = pd.concat([Th_Demand.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Lost_Load.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Curtailment.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Resist_En.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:]], axis=1)
-           Th_TimeSeries[s][c].columns = ['Demand','Lost Load', 'Curtailment', 'Resistance Energy']
+           Th_TimeSeries[s][c] = pd.concat([Th_Demand.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Lost_Load.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_ElRes_Prod.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:], Th_Curtailment.iloc[(s*c*nP+c*nP):(s*c*nP+c*nP+nP),:]], axis=1)
+           Th_TimeSeries[s][c].columns = ['Demand','Lost Load', 'Electric resistance production', 'Curtailment']
            Th_TimeSeries[s][c].index = dateInd
            Th_TimeSeries[s]['Class'+str(c+1)] = Th_TimeSeries[s].pop(c)
            
@@ -93,8 +90,8 @@ def TimeSeries(instance):
 
 #%% Energy System Configuration
 def EnergySystemInfo(instance):
-    
-    #%% System size
+        
+    "System size"
     nS = int(instance.Scenarios.extract_values()[None])
     nP = int(instance.Periods.extract_values()[None])
     nY = int(instance.Years.extract_values()[None])
@@ -102,119 +99,190 @@ def EnergySystemInfo(instance):
     dr = instance.Discount_Rate.extract_values()[None]
 
     # Electricity system components
-    RES_Units = instance.RES_Units.get_values()[None]
-    RES_Specific_Capacity = instance.RES_Nominal_Capacity.extract_values()[None]
-    RES_Capacity = pd.DataFrame(['RES', 'kW', RES_Units*RES_Specific_Capacity/1000]).T.set_index([0,1])
-    
-    Bat_Capacity = pd.DataFrame(['Battery', 'kWh', instance.Battery_Nominal_Capacity.get_values()[None]/1000]).T.set_index([0,1])
-       
+    RES_Capacity = pd.DataFrame(['RES', 'kW', instance.RES_Units.get_values()[None]*instance.RES_Nominal_Capacity.extract_values()[None]/1000]).T.set_index([0,1])
+    BESS_Capacity = pd.DataFrame(['Battery Storage System', 'kW', instance.BESS_Nominal_Capacity.get_values()[None]/1000]).T.set_index([0,1])
     Gen_Capacity = pd.DataFrame(['Genset', 'kW', instance.Generator_Nominal_Capacity.get_values()[None]/1000]).T.set_index([0,1])
     
-    EE_system = pd.concat([RES_Capacity,Bat_Capacity,Gen_Capacity], axis=0)
-    EE_system.index.names = ['EE components', 'Unit']
+    EE_system = pd.concat([RES_Capacity,BESS_Capacity,Gen_Capacity], axis=0)
+    EE_system.index.names = ['Component', 'Unit']
     EE_system.columns = ['Total']
 
+    # Thermal system components
+    ElRes_Power = list(instance.Electric_Resistance_Nominal_Power.get_values().values())
+    ElRes_Power = [i/1000 for i in ElRes_Power]
+    ElRes_Power = pd.DataFrame([['Electric resistance', 'kW'] + ElRes_Power]).set_index([0,1])
     
-    # Thermal system components        
-    Resistance_Power = list(instance.Resistance_Nominal_Power.get_values().values())
-    Resistance_Power = [i/1000 for i in Resistance_Power]
-    Resistance_Power = pd.DataFrame([['Electric resistance', 'kW'] + Resistance_Power]).set_index([0,1])
-    
-    Th_system = pd.concat([Resistance_Power], axis=0)
+    Th_system = pd.concat([ElRes_Power], axis=0)
     Th_system = pd.concat([Th_system, Th_system.sum(1).to_frame()],axis=1)
     Th_system.index.names = ['Th Components', 'Unit']
     Th_system.columns = ['Class'+str(c+1) for c in range(nC)]+['Total']
     
     EnergySystemSize = pd.concat([EE_system, Th_system],axis=0).fillna("-")
     
-
-
-    #%% Economic analysis
-    NPC = pd.DataFrame(['Net Present Cost', 'MUSD', instance.ObjectiveFuntion.expr()/1e6]).T.set_index([0,1])
+    
+    #%% Economic Analysis
+    "Net Present Cost"
+    NPC = pd.DataFrame(['Net Present Cost', 'System', '-', 'MUSD', instance.ObjectiveFuntion.expr()/1e6]).T.set_index([0,1,2,3])
     NPC.columns = ['Total']
+    NPC.index.names = ['Cost item', 'Component', 'Scenario', 'Unit']
     
-    #%% Investment cost   
-    RES_Specific_Investment_Cost = instance.RES_Investment_Cost.extract_values()[None]
-    RES_Investment_Cost = pd.DataFrame(['Investment Cost', 'RES', 'MUSD', RES_Units*RES_Specific_Investment_Cost/1e6]).T.set_index([0,1,2])
+    "Investment Cost"   
+    RES_Investment_Cost = instance.RES_Investment_Cost.extract_values()[None]
+    RES_Investment_Cost = pd.DataFrame(['Investment Cost', 'RES', '-', 'MUSD', RES_Investment_Cost/1e6]).T.set_index([0,1,2,3])
     RES_Investment_Cost.columns = ['Total']
-    
-    Bat_Capacity = instance.Battery_Nominal_Capacity.get_values()[None]
-    Bat_Specific_Investment_Cost = instance.Battery_Invesment_Cost.extract_values()[None]
-    Bat_Investment_Cost = pd.DataFrame(['Investment Cost', 'Battery', 'MUSD', Bat_Capacity*Bat_Specific_Investment_Cost/1e6]).T.set_index([0,1,2])
-    Bat_Investment_Cost.columns = ['Total']
 
-    Gen_Capacity = instance.Generator_Nominal_Capacity.get_values()[None]
-    Gen_Specific_Investment_Cost = instance.Generator_Invesment_Cost.extract_values()[None]
-    Gen_Investment_Cost = pd.DataFrame(['Investment Cost', 'Genset', 'MUSD', Gen_Capacity*Gen_Specific_Investment_Cost/1e6]).T.set_index([0,1,2])
+    BESS_Investment_Cost = instance.BESS_Investment_Cost.extract_values()[None]
+    BESS_Investment_Cost = pd.DataFrame(['Investment Cost', 'Battery Storage System', '-', 'MUSD', BESS_Investment_Cost/1e6]).T.set_index([0,1,2,3])
+    BESS_Investment_Cost.columns = ['Total']
+
+    Gen_Investment_Cost = instance.Generator_Investment_Cost.extract_values()[None]
+    Gen_Investment_Cost = pd.DataFrame(['Investment Cost', 'Genset', '-', 'MUSD', Gen_Investment_Cost/1e6]).T.set_index([0,1,2,3])
     Gen_Investment_Cost.columns = ['Total']
-    
-    Resistance_Specific_Investment_Cost = instance.Resistance_Invesment_Cost.extract_values()[None]
-    Resistance_Power = list(instance.Resistance_Nominal_Power.get_values().values())
-    Resistance_Investment_Cost = pd.DataFrame(np.multiply(Resistance_Power, Resistance_Specific_Investment_Cost/1e6)).T 
-    Resistance_Investment_Cost = pd.concat([pd.DataFrame(['Investment Cost', 'Electric resistance', 'MUSD']).T,Resistance_Investment_Cost], axis=1)
-    Resistance_Investment_Cost.columns = np.arange(Resistance_Investment_Cost.shape[1])
-    Resistance_Investment_Cost = Resistance_Investment_Cost.set_index([0,1,2])
 
+    ElRes_Investment_Cost = pd.DataFrame.from_dict(instance.Electric_Resistance_Investment_Cost.get_values(), orient='index').T
+    ElRes_Investment_Cost = pd.concat([ElRes_Investment_Cost/1e6, pd.DataFrame([ElRes_Investment_Cost.sum(1).values[0]/1e6])], axis=1)
+    ElRes_Investment_Cost.columns = ['Class'+str(c+1) for c in range(nC)]+['Total']
+    ElRes_Investment_Cost = pd.concat([pd.DataFrame(['Investment Cost', 'Electric resistance', '-', 'MUSD']).T, ElRes_Investment_Cost], axis=1).set_index([0,1,2,3])
 
-    #%% O&M cost   
-    RES_OM_Cost = pd.DataFrame()
-    Bat_OM_Cost = pd.DataFrame()
-    Gen_OM_Cost = pd.DataFrame()
-    Resistance_OM_Cost = pd.DataFrame()
+    BESS_Replacement_Cost = instance.BESS_Replacement_Cost.extract_values()[None]
+    BESS_Replacement_Cost = pd.DataFrame(['Replacement Cost', 'Battery Storage System', '-', 'MUSD', BESS_Investment_Cost/1e6]).T.set_index([0,1,2,3])
+    BESS_Replacement_Cost.columns = ['Total']
+
     
-    for y in range(1,nY+1):
-        RES_OM_Cost = pd.concat([RES_OM_Cost, pd.DataFrame(['O&M Cost', str(y),'RES', 'MUSD', RES_Units*instance.RES_Nominal_Capacity.extract_values()[None]*instance.RES_Investment_Cost.extract_values()[None]*instance.RES_Maintenance_Operation_Cost.extract_values()[None]/1e6/(1+dr)**y]).T.set_index([0,1,2,3])],axis=0)
-        Bat_OM_Cost = pd.concat([Bat_OM_Cost, pd.DataFrame(['O&M Cost', str(y),'Battery', 'MUSD', instance.Battery_Nominal_Capacity.extract_values()[None]*instance.Battery_Invesment_Cost.extract_values()[None]*instance.Battery_Maintenance_Operation_Cost.extract_values()[None]/1e6/(1+dr)**y]).T.set_index([0,1,2,3])],axis=0)
-        Gen_OM_Cost = pd.concat([Gen_OM_Cost, pd.DataFrame(['O&M Cost', str(y),'Genset', 'MUSD', instance.Generator_Nominal_Capacity.extract_values()[None]*instance.Generator_Invesment_Cost.extract_values()[None]*instance.Generator_Maintenance_Operation_Cost.extract_values()[None]/1e6/(1+dr)**y]).T.set_index([0,1,2,3])],axis=0)
-        
-        Resistance_OM_Cost = pd.concat([Resistance_OM_Cost, pd.concat([pd.DataFrame(['O&M Cost', str(y),'Electric resistance', 'MUSD']).T, pd.DataFrame([i*instance.Resistance_Invesment_Cost.extract_values()[None]*instance.Resistance_Maintenance_Operation_Cost.extract_values()[None]/1e6/(1+dr)**y for i in instance.Resistance_Nominal_Power.extract_values()]).T],axis=1)],axis=0)
-        
+    "Fixed Costs"   
+    RES_OM_Cost = instance.RES_OM_Cost.extract_values()[None]
+    RES_OM_Cost = pd.DataFrame(['Fixed Cost', 'RES', '-', 'MUSD', RES_OM_Cost/1e6]).T.set_index([0,1,2,3])
     RES_OM_Cost.columns = ['Total']
-    Bat_OM_Cost.columns = ['Total']
-    Gen_OM_Cost.columns = ['Total']
+
+    BESS_OM_Cost = instance.BESS_OM_Cost.extract_values()[None]
+    BESS_OM_Cost = pd.DataFrame(['Fixed Cost', 'Battery Storage System', '-', 'MUSD', BESS_OM_Cost/1e6]).T.set_index([0,1,2,3])
+    BESS_OM_Cost.columns = ['Total']
+
+    Generator_OM_Cost = instance.Generator_OM_Cost.extract_values()[None]
+    Generator_OM_Cost = pd.DataFrame(['Fixed Cost', 'Genset', '-', 'MUSD', Generator_OM_Cost/1e6]).T.set_index([0,1,2,3])
+    Generator_OM_Cost.columns = ['Total']
+    
+    ElRes_OM_Cost = pd.DataFrame.from_dict(instance.Electric_Resistance_OM_Cost.get_values(), orient='index').T
+    ElRes_OM_Cost = pd.concat([ElRes_OM_Cost/1e6, pd.DataFrame([ElRes_OM_Cost.sum(1).values[0]/1e6])], axis=1)
+    ElRes_OM_Cost.columns = ['Class'+str(c+1) for c in range(nC)]+['Total']
+    ElRes_OM_Cost = pd.concat([pd.DataFrame(['Fixed Cost', 'Electric resistance', '-', 'MUSD']).T, ElRes_OM_Cost], axis=1).set_index([0,1,2,3])
+
+    "Variable costs"
+    Total_Diesel_Cost = pd.DataFrame()
+    Total_Diesel_Cost_index = [['Fuel cost' for s in range(1,nS+1)], ['Genset' for s in range(1,nS+1)], [str(s) for s in range(1,nS+1)], ['MUSD' for s in range(1,nS+1)]]
+    
+    EE_LL_Cost = pd.DataFrame()
+    EE_LL_Cost_index = [['Electric lost load cost' for s in range(1,nS+1)], ['System' for s in range(1,nS+1)], [str(s) for s in range(1,nS+1)], ['MUSD' for s in range(1,nS+1)]]
+    Th_LL_Cost = pd.DataFrame()
+    Th_LL_Cost_index = [['Thermal lost load cost' for s in range(1,nS+1)], ['System' for s in range(1,nS+1)], [str(s) for s in range(1,nS+1)], ['MUSD' for s in range(1,nS+1)]]
+    
+    for s in range(1,nS+1):
+        Total_Diesel_Cost = pd.concat([Total_Diesel_Cost, pd.DataFrame([instance.Total_Diesel_Cost.extract_values()[s]/1e6])], axis=0)
+        EE_LL_Cost = pd.concat([EE_LL_Cost, pd.DataFrame([instance.Scenario_Lost_Load_Cost_EE.extract_values()[s]/1e6])], axis=0)
         
-    Resistance_OM_Cost.columns = np.arange(Resistance_OM_Cost.shape[1])        
-    Resistance_OM_Cost = Resistance_OM_Cost.set_index([0,1,2,3])
-    Resistance_OM_Cost.columns = ['Class'+str(c+1) for c in range(nC)]
+        for c in range(1,nC+1):
+            Th_LL_Cost = pd.concat([Th_LL_Cost, pd.DataFrame([instance.Scenario_Lost_Load_Cost_Th.get_values()[(s,c)]/1e6])], axis=1)
+            
+        Th_LL_Cost = pd.concat([Th_LL_Cost, pd.DataFrame([Th_LL_Cost.sum(1).values[0]])], axis=1)
+        Th_LL_Cost.columns = ['Class'+str(c+1) for c in range(nC)]+['Total']
     
-   
-
-
-
-    #%% Concatenating
-    EE_Inv_Cost = pd.concat([RES_Investment_Cost, Bat_Investment_Cost, Gen_Investment_Cost], axis=0)
-    EE_Inv_Cost.index.names = ['Cost item', 'Component', 'Unit']
+    Total_Diesel_Cost.index = pd.MultiIndex.from_arrays(Total_Diesel_Cost_index)
+    Total_Diesel_Cost.columns = ['Total']
+    EE_LL_Cost.index = pd.MultiIndex.from_arrays(EE_LL_Cost_index)
+    EE_LL_Cost.columns = ['Total']
+    Th_LL_Cost.index = pd.MultiIndex.from_arrays(Th_LL_Cost_index)
     
-    Th_Inv_Cost = pd.concat([Resistance_Investment_Cost], axis=0)
-    Th_Inv_Cost.index.names = ['Cost item', 'Component', 'Unit']
-    Th_Inv_Cost = pd.concat([Th_Inv_Cost, Th_Inv_Cost.sum(1).to_frame()],axis=1)      
-    Th_Inv_Cost.columns = ['Class'+str(c+1) for c in range(nC)]+['Total']
-
-    EE_OM_Cost = pd.concat([RES_OM_Cost, Bat_OM_Cost, Gen_OM_Cost], axis=0).groupby(level=[0,2,3],axis=0,sort=False).sum()
-    EE_OM_Cost.index.names = ['Cost item', 'Component', 'Unit']
+  
+    "Concatenating"
+    EE_Inv_Cost = pd.concat([RES_Investment_Cost,BESS_Investment_Cost,Gen_Investment_Cost], axis=0)
+    EE_Inv_Cost.index.names = NPC.index.names
     
-    Th_tot_OM_Cost = pd.concat([Resistance_OM_Cost], axis=0).groupby(level=[0,2,3],axis=0,sort=False).sum()
-    Th_tot_OM_Cost.index.names = ['Cost item', 'Component', 'Unit']
-    Th_tot_OM_Cost = pd.concat([Th_tot_OM_Cost, Th_tot_OM_Cost.sum(1).to_frame()],axis=1)      
-    Th_tot_OM_Cost.columns = ['Class'+str(c+1) for c in range(nC)]+['Total']
+    Th_Inv_Cost = pd.concat([ElRes_Investment_Cost], axis=0)
+    Th_Inv_Cost.index.names = NPC.index.names
 
+    EE_OM_Cost = pd.concat([RES_OM_Cost, BESS_OM_Cost, Generator_OM_Cost], axis=0)
+    EE_OM_Cost.index.names = NPC.index.names
+    
+    Th_OM_Cost = pd.concat([ElRes_OM_Cost], axis=0)
+    Th_OM_Cost.index.names = NPC.index.names
 
-    EnergySystemCost = pd.concat([EE_Inv_Cost, Th_Inv_Cost, EE_OM_Cost, Th_tot_OM_Cost],axis=0).fillna("-")
+    EnergySystemFixedCost = pd.concat([NPC, EE_Inv_Cost, Th_Inv_Cost, EE_OM_Cost, Th_OM_Cost],axis=0).fillna("-")
+    EnergySystemVarCost = pd.concat([Total_Diesel_Cost, EE_LL_Cost, Th_LL_Cost], axis=0).fillna("-")
+    EnergySystemCost = pd.concat([EnergySystemFixedCost, EnergySystemVarCost], axis=0)
+
+    
+    #%%
+    "Energy Indicators"
+    
+    "TPES [MWh]"
+    EE_RES_Prod = pd.DataFrame.from_dict(instance.RES_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e6
+    EE_Gen_Prod = pd.DataFrame.from_dict(instance.Generator_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e6
+    Th_ElRes_Prod  = pd.DataFrame.from_dict(instance.Tot_Electric_Resistance_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e6
+    
+    eta_Generator = instance.Generator_Efficiency.extract_values()[None]
+    eta_ElRes = instance.Electric_Resistance_Efficiency.extract_values()[None]
+    
+    TPES_EE = EE_RES_Prod + EE_Gen_Prod/eta_Generator
+    TPES_Th = Th_ElRes_Prod/eta_ElRes
+    TPES_tot = TPES_EE + TPES_Th
+    TPES_ff  = (EE_Gen_Prod/eta_Generator + Th_ElRes_Prod/eta_ElRes)/TPES_tot
+    TPES_res = EE_RES_Prod/TPES_tot
+    
+    TPES_ind   = ['Total Primary Energy Supply', 'Fossil Primary Energy Supply', 'Renewable Primary Energy Supply']
+    TPES_unit  = ['MWh', '%', '%']
+    
+    TPES = pd.concat([TPES_tot, TPES_ff, TPES_res], axis=0)
+    TPES.index = np.arange(0,TPES.shape[0])
+    TPES = pd.concat([TPES, TPES_EE, TPES_Th], axis=1).fillna('-')
+    TPES.index = pd.MultiIndex.from_arrays([TPES_ind, TPES_unit])
+    TPES.columns = ['Total', 'Electric', 'Thermal']
+    
+    "LCOE [USD/kWh]"
+    EE_Demand = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e6   #[MWh]
+    Th_Demand = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e6    #[MWh]
+    Net_Present_Demand = sum((EE_Demand+Th_Demand)/(1+dr)**i for i in range(1,(nY+1)))/60    #[MWh]
+    LCOE = pd.DataFrame([NPC.iloc[0,0]/Net_Present_Demand.iloc[0,0]*1e3])    #[USD/kWh]
+    LCOE.index = pd.MultiIndex.from_arrays([['Levelized Cost of Energy '],['USD/kWh']])
+    LCOE.columns = ['Total'] 
+    
+    "System efficiency"
+    eta_EE = EE_Demand/TPES_EE
+    eta_Th = Th_Demand/TPES_Th
+    eta_tot = (EE_Demand + Th_Demand)/TPES_tot
+    
+    efficiencies = pd.concat([eta_tot, eta_EE, eta_Th], axis=1)
+    efficiencies.index = pd.MultiIndex.from_arrays([['Efficiency'],['%']])
+    efficiencies.columns = TPES.columns
+    
+    EnergyIndicators = pd.concat([TPES, efficiencies, LCOE], axis=0).fillna('-')
     
     
-    #%% Export
+    "Export"
     ESs_path = 'Results'
     if not os.path.exists(ESs_path):
         os.makedirs(ESs_path)
     
     ESsFile = ExcelWriter(ESs_path+'/EnergySystemSize.xlsx')
     EnergySystemSize.to_excel(ESsFile, sheet_name='Size')   
-    EnergySystemCost.to_excel(ESsFile, sheet_name='Cost')   
+    EnergySystemCost.to_excel(ESsFile, sheet_name='Cost')  
+    EnergyIndicators.to_excel(ESsFile, sheet_name='Indicators')
     
     ESsFile.save()
-           
     
-    return(EnergySystemSize, EnergySystemCost)
+    excel = Dispatch('Excel.Application')   
+    cwd = os.getcwd()
+    ESsFile = excel.Workbooks.Open(cwd+'/'+ESs_path+'/EnergySystemSize.xlsx')
+    for y in range(1,4):
+        excel.Worksheets(y).Activate()
+        excel.ActiveSheet.Columns.AutoFit()
+    ESsFile.Save()
+    ESsFile.Close()
+
+
+    return(EnergySystemSize, EnergySystemCost, EnergyIndicators)
+
+
+
 
     
 
