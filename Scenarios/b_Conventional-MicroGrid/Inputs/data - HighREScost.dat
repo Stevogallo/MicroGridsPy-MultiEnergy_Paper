@@ -1,4 +1,4 @@
-param: Periods := 100;                               # Number of periods per year of analysis of the energy variables
+param: Periods := 525600;                               # Number of periods per year of analysis of the energy variables
 param: Years := 20;                                     # Number of years of the project
 param: StartDate := '01/01/2017 00:00:00';              # Start date and time of the project
 param: PlotTime := 1;                                   # Quantity of days that are going to be plot
@@ -19,8 +19,8 @@ param: Classes := 4;                                    # Number of classes of u
 
 param: RES_Nominal_Capacity := 300;                     # Nominal capacity of the RES in W/unit
 param: RES_Inverter_Efficiency := 0.986;                # Efficiency of the inverter in %
-param: RES_Inv_Specific_Cost := 2;                      # Investment cost of RES unit in USD/W
-param: RES_OM_Specific_Cost := 0.02;                    # % of the total investment spend in operation and management of RES unit in each period 
+param: RES_Inv_Specific_Cost := 999999;                      # Investment cost of RES unit in USD/W
+param: RES_OM_Specific_Cost := 1;                    # % of the total investment spend in operation and management of RES unit in each period 
 
 
 param: BESS_Discharge_Efficiency := 0.95;               # Efficiency of the discharge of the battery in %
@@ -29,8 +29,9 @@ param: BESS_Depth_of_Discharge := 0.2;                  # Depth of discharge of 
 param: BESS_Maximum_Discharge_Time := 5;                # Maximum time of discharge of the battery in hours
 param: BESS_Maximum_Charge_Time := 5;                   # Maximum time of charge of the battery in hours
 param: BESS_Replacement_Time := 20;                     # Period of replacement of the battery in years
-param: BESS_Inv_Specific_Cost := 0.55;                  # Investment cost of battery in USD/Wh
-param: BESS_OM_Specific_Cost := 0.02;                   # % of the total investment spend in operation and management of battery unit in each period
+param: BESS_Inv_Specific_Cost := 999999;                  # Investment cost of battery in USD/Wh
+param: BESS_OM_Specific_Cost := 1;                   # % of the total investment spend in operation and management of battery unit in each period
+
 
 param: Generator_Efficiency := 0.3;                     # Generator electric efficiency in %
 param: Lower_Heating_Value := 9840;                     # Lower heating value of the diesel in Wh/L
