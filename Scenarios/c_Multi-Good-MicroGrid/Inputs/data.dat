@@ -1,4 +1,4 @@
-param: Periods := 525600;                                  # Number of periods per year of analysis of the energy variables
+param: Periods := 100;                                  # Number of periods per year of analysis of the energy variables
 param: Years := 20;                                     # Number of years of the project
 param: StartDate := '01/01/2017 00:00:00';              # Start date and time of the project
 param: PlotTime := 1;                                   # Quantity of days that are going to be plot
