@@ -26,8 +26,8 @@ def Initialize_years(model,i):
 
 
 #%% Electricity demand
-Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', index_col=0) # Import electricity demand
-Electric_Energy_Demand = Electric_Energy_Demand.round(0)
+Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', sep=';', index_col=0) # Import electricity demand
+Electric_Energy_Demand = Electric_Energy_Demand.round(3)
 
 
 def Initialize_Electric_Energy_Demand(model,s,t):
@@ -40,8 +40,8 @@ def Initialize_Electric_Energy_Demand(model,s,t):
 
 
 #%% Thermal energy demand
-Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', index_col=0) # Import thermal energy demand
-Thermal_Energy_Demand = Thermal_Energy_Demand.round(0)
+Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', sep=';',  index_col=0) # Import thermal energy demand
+Thermal_Energy_Demand = Thermal_Energy_Demand.round(3)
 
 def Initialize_Thermal_Energy_Demand(model,s,c,t):
     '''
