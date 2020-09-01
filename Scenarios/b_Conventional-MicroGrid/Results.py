@@ -246,8 +246,8 @@ def EnergySystemInfo(instance):
     TPES.columns = ['Total', 'Electric', 'Thermal']
     
     "LCOE [USD/kWh]"
-    EE_Demand = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e6   #[MWh]
-    Th_Demand = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e6    #[MWh]
+    EE_Demand = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e3   #[MWh]
+    Th_Demand = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e3    #[MWh]
     Net_Present_Demand = sum((EE_Demand+Th_Demand)/(1+dr)**i for i in range(1,(nY+1)))/60    #[MWh]
     LCOE = pd.DataFrame([NPC.iloc[0,0]/Net_Present_Demand.iloc[0,0]])    #[USD/kWh]
     LCOE.index = pd.MultiIndex.from_arrays([['Levelized Cost of Energy '],['USD/kWh']])
