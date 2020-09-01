@@ -26,7 +26,8 @@ def Initialize_years(model,i):
 
 
 #%% Electricity demand
-Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', index_col=0) # Import electricity demand
+Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', sep=';', index_col=0) # Import electricity demand
+Electric_Energy_Demand = Electric_Energy_Demand.round(3)
 
 def Initialize_Electric_Energy_Demand(model,s,t):
     '''
@@ -38,7 +39,8 @@ def Initialize_Electric_Energy_Demand(model,s,t):
 
 
 #%% Thermal energy demand
-Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', index_col=0) # Import thermal energy demand
+Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', sep=';',  index_col=0) # Import thermal energy demand
+Thermal_Energy_Demand = Thermal_Energy_Demand.round(3)
 
 def Initialize_Thermal_Energy_Demand(model,s,c,t):
     '''
@@ -51,7 +53,8 @@ def Initialize_Thermal_Energy_Demand(model,s,c,t):
 
 
 #%% PV output
-RES_Energy_Output = pd.read_csv('Inputs/RES_Energy_Output.csv', index_col=0)  # Import RES energy generation profile
+RES_Energy_Output = pd.read_csv('Inputs/RES_Energy_Output.csv', sep=';', index_col=0)  # Import RES energy generation profile
+RES_Energy_Output = RES_Energy_Output.round(3)
 
 def Initialize_RES_Energy(model,s,t):
     '''
