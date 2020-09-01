@@ -19,7 +19,7 @@ param: Classes := 4;                                    # Number of classes of u
 
 param: RES_Nominal_Capacity := 0.3;                     # Nominal capacity of the RES in kW/unit
 param: RES_Inverter_Efficiency := 0.986;                # Efficiency of the inverter in %
-param: RES_Inv_Specific_Cost := 200;                    # Investment cost of RES unit in USD/kW
+param: RES_Inv_Specific_Cost := 2000;                   # Investment cost of RES unit in USD/kW
 param: RES_OM_Specific_Cost := 0.02;                    # % of the total investment spend in operation and management of RES unit in each period 
 
 

@@ -83,7 +83,7 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     
     "Solver use during the optimization"
     opt = SolverFactory('gurobi')    
-#    opt.set_options('Method=2 Crossover=0 BarConvTol=1e-4 OptimalityTol=1e-4 FeasibilityTol=1e-4 IterationLimit=1000')
+    opt.set_options('Method=2 Crossover=0 BarConvTol=1e-4 OptimalityTol=1e-4 FeasibilityTol=1e-4 IterationLimit=1000')
     print('Model_Resolution: Solver called')
     
     "Solving a model instance"

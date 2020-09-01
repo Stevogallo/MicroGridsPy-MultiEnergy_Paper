@@ -27,9 +27,8 @@ def Initialize_years(model,i):
 
 
 #%% Electricity demand
-Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', index_col=0) # Import electricity demand
-# Electric_Energy_Demand = Electric_Energy_Demand/1000      # Convert in kW
-# Electric_Energy_Demand = round(Electric_Energy_Demand, 1) 
+Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', sep=';', index_col=0) # Import electricity demand
+Electric_Energy_Demand = Electric_Energy_Demand.round(3)
 
 def Initialize_Electric_Energy_Demand(model,i,t):
     '''
@@ -41,9 +40,8 @@ def Initialize_Electric_Energy_Demand(model,i,t):
 
 
 #%% Thermal energy demand
-Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', index_col=0) # Import thermal energy demand
-# Thermal_Energy_Demand = Thermal_Energy_Demand/1000
-# Thermal_Energy_Demand = round(Thermal_Energy_Demand, 1)
+Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', sep=';',  index_col=0) # Import thermal energy demand
+Thermal_Energy_Demand = Thermal_Energy_Demand.round(3)
 
 def Initialize_Thermal_Energy_Demand(model,i,c,t):
     '''
@@ -56,9 +54,8 @@ def Initialize_Thermal_Energy_Demand(model,i,c,t):
 
 
 #%% PV output
-RES_Energy_Output = pd.read_csv('Inputs/RES_Energy_Output.csv', index_col=0)  # Import PV energy generation profile
-# RES_Energy_Output = RES_Energy_Output/1000
-# RES_Energy_Output = round(RES_Energy_Output, 1)
+RES_Energy_Output = pd.read_csv('Inputs/RES_Energy_Output.csv', sep=';', index_col=0)  # Import RES energy generation profile
+RES_Energy_Output = RES_Energy_Output.round(3)
 
 def Initialize_RES_Energy(model, i, t):
     '''
@@ -71,18 +68,16 @@ def Initialize_RES_Energy(model, i, t):
 
 
 #%% Solar collector output
-SC_Energy_Output = pd.read_csv('Inputs/SC_Energy_Output.csv', index_col=0) # Import solar collector energy generation profile
-# SC_Energy_Output = SC_Energy_Output/1000
-# SC_Energy_Output = round(SC_Energy_Output, 1)
+SC_Energy_Output = pd.read_csv('Inputs/SC_Energy_Output.csv', sep=';', index_col=0)  # Import solar collector energy generation profile
+SC_Energy_Output = SC_Energy_Output.round(3)
 
-def Initialize_SC_Energy(model, i, c, t):
+def Initialize_SC_Energy(model,i,c,t):
     '''
-    This function returns the value of the energy yield by one SC under the characteristics of the system 
-    analysis for each period of analysis from a excel file.
+    This function returns the value of the thermal energy demand from a system for each period and classes of analysis from a excel file.
     :param model: Pyomo model as defined in the Model_Creation script.
-    :return: The energy yield of one SC for the class c in the period t.
+    :return: The energy demand for the period t.     
     '''
-    column=i*c;
+    column=i*c
     return float(SC_Energy_Output.iloc[t-1,column-1])
 
 
