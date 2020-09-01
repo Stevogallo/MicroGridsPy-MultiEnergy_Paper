@@ -100,9 +100,9 @@ def EnergySystemInfo(instance):
     dr = instance.Discount_Rate.extract_values()[None]
 
     # Electricity system components
-    RES_Capacity = pd.DataFrame(['RES', 'kW', instance.RES_Units.get_values()[None]*instance.RES_Nominal_Capacity.extract_values()[None]/1000]).T.set_index([0,1])
-    BESS_Capacity = pd.DataFrame(['Battery Storage System', 'kW', instance.BESS_Nominal_Capacity.get_values()[None]/1000]).T.set_index([0,1])
-    Gen_Capacity = pd.DataFrame(['Genset', 'kW', instance.Generator_Nominal_Capacity.get_values()[None]/1000]).T.set_index([0,1])
+    RES_Capacity = pd.DataFrame(['RES', 'kW', instance.RES_Units.get_values()[None]*instance.RES_Nominal_Capacity.extract_values()[None]]).T.set_index([0,1])
+    BESS_Capacity = pd.DataFrame(['Battery Storage System', 'kW', instance.BESS_Nominal_Capacity.get_values()[None]]).T.set_index([0,1])
+    Gen_Capacity = pd.DataFrame(['Genset', 'kW', instance.Generator_Nominal_Capacity.get_values()[None]]).T.set_index([0,1])
     
     EE_system = pd.concat([RES_Capacity,BESS_Capacity,Gen_Capacity], axis=0)
     EE_system.index.names = ['Component', 'Unit']
@@ -110,7 +110,7 @@ def EnergySystemInfo(instance):
 
     # Thermal system components
     Boiler_Capacity = list(instance.Boiler_Nominal_Capacity.get_values().values())
-    Boiler_Capacity = [i/1000 for i in Boiler_Capacity]
+    Boiler_Capacity = [i for i in Boiler_Capacity]
     Boiler_Capacity = pd.DataFrame([['NG Boiler', 'kW'] + Boiler_Capacity]).set_index([0,1])
     
     Th_system = pd.concat([Boiler_Capacity], axis=0)
@@ -223,9 +223,9 @@ def EnergySystemInfo(instance):
     "Energy Indicators"
     
     "TPES [MWh]"
-    EE_RES_Prod = pd.DataFrame.from_dict(instance.RES_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e6
-    EE_Gen_Prod = pd.DataFrame.from_dict(instance.Generator_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e6
-    Th_Boiler_Prod  = pd.DataFrame.from_dict(instance.Boiler_Energy_Production.extract_values(), orient='index').sum(0).to_frame()/1e6
+    EE_RES_Prod = pd.DataFrame.from_dict(instance.RES_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e3
+    EE_Gen_Prod = pd.DataFrame.from_dict(instance.Generator_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e3
+    Th_Boiler_Prod  = pd.DataFrame.from_dict(instance.Boiler_Energy_Production.extract_values(), orient='index').sum(0).to_frame()/1e3
     
     eta_Generator = instance.Generator_Efficiency.extract_values()[None]
     eta_Boiler = instance.Boiler_Efficiency.extract_values()[None]
@@ -249,7 +249,7 @@ def EnergySystemInfo(instance):
     EE_Demand = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e6   #[MWh]
     Th_Demand = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e6    #[MWh]
     Net_Present_Demand = sum((EE_Demand+Th_Demand)/(1+dr)**i for i in range(1,(nY+1)))/60    #[MWh]
-    LCOE = pd.DataFrame([NPC.iloc[0,0]/Net_Present_Demand.iloc[0,0]*1e3])    #[USD/kWh]
+    LCOE = pd.DataFrame([NPC.iloc[0,0]/Net_Present_Demand.iloc[0,0]])    #[USD/kWh]
     LCOE.index = pd.MultiIndex.from_arrays([['Levelized Cost of Energy '],['USD/kWh']])
     LCOE.columns = ['Total'] 
     
