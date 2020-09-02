@@ -23,7 +23,7 @@ from Constraints import Net_Present_Cost,Scenario_Net_Present_Cost,Total_Investm
     Thermal_Energy_Balance,Maximum_Boiler_Energy,NG_Consumption,Maximum_Lost_Load_Th,RES_Investment_Cost,BESS_Investment_Cost,\
     RES_OM_Cost,BESS_OM_Cost,BESS_Replacement_Cost,RES_Energy_Production,BESS_State_of_Charge,Maximum_BESS_Charge,Minimum_BESS_Charge,\
     Max_Power_BESS_Charge,Max_Power_BESS_Discharge,Max_BESS_Inflow,Min_BESS_Outflow,Electric_Resistance_Investment_Cost,Electric_Resistance_OM_Cost,\
-    SC_Investment_Cost,SC_OM_Cost,SC_Energy_Production,Tank_State_of_Charge,Maximum_Tank_Charge,Minimum_Tank_Charge,\
+    SC_Investment_Cost,SC_OM_Cost,SC_Energy_Production,Tank_State_of_Charge,Maximum_Tank_Charge,Minimum_Tank_Charge,Tank_Investment_Cost,Tank_OM_Cost,\
     Max_Power_Tank_Discharge,Min_Tank_Outflow,Maximum_Electric_Resistance_Energy,Electric_Resistance_Energy_Production,Tot_Electric_Resistance_Energy_Production
         
 
@@ -41,6 +41,7 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     model.BESSInvestmentCost = Constraint(rule=BESS_Investment_Cost)
     model.GeneratorInvestmentCost = Constraint(rule=Generator_Investment_Cost)
     model.BoilerInvestmentCost = Constraint(model.classes, rule=Boiler_Investment_Cost)
+    model.TankInvestmentCost = Constraint(model.classes, rule=Tank_Investment_Cost)    
     model.ElectricResistanceInvestment_Cost = Constraint(model.classes, rule=Electric_Resistance_Investment_Cost)
     
     model.FixedCosts = Constraint(rule=Fixed_Costs)
@@ -50,6 +51,7 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     model.BESSReplacementCost = Constraint(rule=BESS_Replacement_Cost)
     model.GeneratorOMCost = Constraint(rule=Generator_OM_Cost)
     model.BoilerOMCost = Constraint(model.classes, rule=Boiler_OM_Cost)
+    model.TankOMCost = Constraint(model.classes, rule=Tank_OM_Cost)   
     model.ElectricResistanceOMCost = Constraint(model.classes, rule=Electric_Resistance_OM_Cost)
     
     model.VariableCosts = Constraint(model.scenario, rule=Variable_Costs)    

@@ -26,7 +26,7 @@ def Scenario_Net_Present_Cost(model,s):
 
 "Investment cost"
 def Total_Investment_Cost(model):
-    return model.Total_Investment_Cost == model.RES_Investment_Cost + model.BESS_Investment_Cost + model.Generator_Investment_Cost + sum(model.SC_Investment_Cost[c] + model.Boiler_Investment_Cost[c] + model.Electric_Resistance_Investment_Cost[c] for c in model.classes)
+    return model.Total_Investment_Cost == model.RES_Investment_Cost + model.BESS_Investment_Cost + model.Generator_Investment_Cost + sum(model.SC_Investment_Cost[c] + model.Boiler_Investment_Cost[c] + model.Tank_Investment_Cost[c] + model.Electric_Resistance_Investment_Cost[c] for c in model.classes)
 
 def RES_Investment_Cost(model):
    return model.RES_Investment_Cost == model.RES_Units*model.RES_Nominal_Capacity*model.RES_Inv_Specific_Cost
@@ -43,13 +43,16 @@ def Generator_Investment_Cost(model):
 def Boiler_Investment_Cost(model,c):
    return model.Boiler_Investment_Cost[c] == model.Boiler_Nominal_Capacity[c]*model.Boiler_Inv_Specific_Cost
 
+def Tank_Investment_Cost(model,c):
+   return model.Tank_Investment_Cost[c] == model.Tank_Nominal_Capacity[c]*model.Tank_Inv_Specific_Cost
+
 def Electric_Resistance_Investment_Cost(model,c):
    return model.Electric_Resistance_Investment_Cost[c] == model.Electric_Resistance_Nominal_Power[c]*model.Electric_Resistance_Specific_Inv_Cost
 
 
 "Fixed costs"                                                  
 def Fixed_Costs(model):
-    return model.Fixed_Costs == model.RES_OM_Cost + model.BESS_OM_Cost + model.Generator_OM_Cost + sum(model.SC_OM_Cost[c] + model.Boiler_OM_Cost[c] + model.Electric_Resistance_OM_Cost[c] for c in model.classes)
+    return model.Fixed_Costs == model.RES_OM_Cost + model.BESS_OM_Cost + model.BESS_Replacement_Cost + model.Generator_OM_Cost + sum(model.SC_OM_Cost[c] + model.Boiler_OM_Cost[c] + model.Tank_OM_Cost[c] + model.Electric_Resistance_OM_Cost[c] for c in model.classes)
  
 def RES_OM_Cost(model):
     return model.RES_OM_Cost == sum(((model.RES_Investment_Cost*model.RES_OM_Specific_Cost)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years)
@@ -68,6 +71,9 @@ def Generator_OM_Cost(model):
 
 def Boiler_OM_Cost(model,c):
     return model.Boiler_OM_Cost[c] == sum(((model.Boiler_Investment_Cost[c]*model.Boiler_OM_Specific_Cost)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years)
+
+def Tank_OM_Cost(model,c):
+    return model.Tank_OM_Cost[c] == sum(((model.Tank_Investment_Cost[c]*model.Tank_OM_Specific_Cost)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years)
 
 def Electric_Resistance_OM_Cost(model,c):
     return model.Electric_Resistance_OM_Cost[c] == sum(((model.Electric_Resistance_Investment_Cost[c]*model.Electric_Resistance_OM_Specific_Cost)/((1+model.Discount_Rate)**model.Project_Years[y])) for y in model.years)
