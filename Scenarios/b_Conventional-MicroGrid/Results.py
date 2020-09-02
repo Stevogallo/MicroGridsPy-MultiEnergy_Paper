@@ -223,9 +223,9 @@ def EnergySystemInfo(instance):
     "Energy Indicators"
     
     "TPES [MWh]"
-    EE_RES_Prod = pd.DataFrame.from_dict(instance.RES_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e3
-    EE_Gen_Prod = pd.DataFrame.from_dict(instance.Generator_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e3
-    Th_Boiler_Prod  = pd.DataFrame.from_dict(instance.Boiler_Energy_Production.extract_values(), orient='index').sum(0).to_frame()/1e3
+    EE_RES_Prod = pd.DataFrame.from_dict(instance.RES_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e3/60
+    EE_Gen_Prod = pd.DataFrame.from_dict(instance.Generator_Energy_Production.get_values(), orient='index').sum(0).to_frame()/1e3/60
+    Th_Boiler_Prod  = pd.DataFrame.from_dict(instance.Boiler_Energy_Production.extract_values(), orient='index').sum(0).to_frame()/1e3/60
     
     eta_Generator = instance.Generator_Efficiency.extract_values()[None]
     eta_Boiler = instance.Boiler_Efficiency.extract_values()[None]
@@ -246,10 +246,10 @@ def EnergySystemInfo(instance):
     TPES.columns = ['Total', 'Electric', 'Thermal']
     
     "LCOE [USD/kWh]"
-    EE_Demand = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e3   #[MWh]
-    Th_Demand = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e3    #[MWh]
-    Net_Present_Demand = sum((EE_Demand+Th_Demand)/(1+dr)**i for i in range(1,(nY+1)))/60    #[MWh]
-    LCOE = pd.DataFrame([NPC.iloc[0,0]/Net_Present_Demand.iloc[0,0]])    #[USD/kWh]
+    EE_Demand = pd.DataFrame.from_dict(instance.Electric_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e3/60  #[MWh]
+    Th_Demand = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index').sum(0).to_frame()/1e3/60   #[MWh]
+    Net_Present_Demand = sum((EE_Demand+Th_Demand)/(1+dr)**i for i in range(1,(nY+1)))    #[MWh]
+    LCOE = pd.DataFrame([NPC.iloc[0,0]/Net_Present_Demand.iloc[0,0]*1e3])    #[USD/kWh]
     LCOE.index = pd.MultiIndex.from_arrays([['Levelized Cost of Energy '],['USD/kWh']])
     LCOE.columns = ['Total'] 
     
