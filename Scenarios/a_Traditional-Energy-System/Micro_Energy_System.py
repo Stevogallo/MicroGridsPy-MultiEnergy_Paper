@@ -18,19 +18,24 @@ from pyomo.environ import AbstractModel
 from Results import TimeSeries, EnergySystemInfo
 from Model_Creation import Model_Creation
 from Model_Resolution import Model_Resolution
+from Plots import ElectricLoadCurves,ThermalLoadCurves
 
 start = time.time()
 
-model = AbstractModel() # define type of optimization problem
+model = AbstractModel()  # Define type of optimization problem
 
 #%% Optimization model
-Model_Creation(model) # Creation of the Sets, parameters and variables.
-instance = Model_Resolution(model) # Resolution of the instance
+Model_Creation(model)  # Creation of the Sets, parameters and variables.
+instance = Model_Resolution(model)  # Resolution of the instance
 
 #%% Result export
-TimeSeries = TimeSeries(instance) # Extract the results of energy from the instance and save it in a excel file 
+TimeSeries = TimeSeries(instance)  # Extract the results of energy from the instance and save it in a excel file 
 EnergySystemSize,EnergySystemCost,EnergyIndicators = EnergySystemInfo(instance)
 
+#%% Plot
+resolution = 500  # Plot resolution in dpi
+ElectricLoadCurves(resolution)
+ThermalLoadCurves(resolution)
 
 end = time.time()
 elapsed = end - start
