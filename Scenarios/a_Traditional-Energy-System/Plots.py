@@ -15,18 +15,22 @@ Authors:
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import pylab
+import itertools
 
 import warnings
 warnings.filterwarnings("ignore")
 
 
 #%% Electric load
-def ElectricLoadCurves(resolution):
+def ElectricLoadCurves(instance):
 
     Electric_Energy_Demand = pd.read_csv('Inputs/Electric_Demand.csv', sep=';', index_col=0) # Import electricity demand
     Electric_Energy_Demand = Electric_Energy_Demand.round(3)
+
+    StartDate = instance.StartDate.extract_values()[None]    
+    PlotResolution = instance.PlotResolution.extract_values()[None]    
     
-    StartDate = '01/01/2017 00:00:00'
     Electric_Energy_Demand.index = pd.DatetimeIndex(start=StartDate, periods=525600, freq='1min')
     
     StartDatePlot = ['12/21/2017 00:00:00','03/21/2017 00:00:00','06/21/2017 00:00:00','09/23/2017 00:00:00'] # MM/DD/YY
@@ -60,17 +64,20 @@ def ElectricLoadCurves(resolution):
     plt.grid(True)
     plt.legend(loc='upper left', fontsize='15', facecolor='white')
     
-    plt.savefig('Results/Plots/ElectricLoadCurves.png', dpi=resolution)
+    plt.savefig('Results/Plots/ElectricLoadCurves.png', dpi=PlotResolution)
     
     return
 
+
 #%% Thermal loads
-def ThermalLoadCurves(resolution):
+def ThermalLoadCurves(instance):
 
     Thermal_Energy_Demand = pd.read_csv('Inputs/Thermal_Demand.csv', sep=';',  index_col=0) # Import thermal energy demand
     Thermal_Energy_Demand = Thermal_Energy_Demand.round(3)
     
-    StartDate = '01/01/2017 00:00:00'
+    StartDate = instance.StartDate.extract_values()[None]    
+    PlotResolution = instance.PlotResolution.extract_values()[None]    
+
     Thermal_Energy_Demand.index = pd.DatetimeIndex(start=StartDate, periods=525600, freq='1min')
     
     StartDatePlot = ['12/23/2017 00:00:00','03/23/2017 00:00:00','06/23/2017 00:00:00','09/23/2017 00:00:00'] # MM/DD/YY
@@ -126,4 +133,151 @@ def ThermalLoadCurves(resolution):
     
         i += 1
         
-    plt.savefig('Results/Plots/ThermalLoadCurves.png', dpi=resolution)
+    plt.savefig('Results/Plots/ThermalLoadCurves.png', dpi=PlotResolution)
+
+    return
+
+
+
+#%% Electric dispatch
+def ElectricDispatch(instance,TimeSeries):
+    
+    "Import params"
+    PlotScenario  = instance.PlotScenario.extract_values()[None]    
+    PlotStartDate = instance.PlotStartDate.extract_values()[None]    
+    PlotEndDate   = instance.PlotEndDate.extract_values()[None]    
+    PlotResolution = instance.PlotResolution.extract_values()[None]    
+    
+    "Series preparation"
+    y_Genset      = TimeSeries['EE']['Sc'+str(PlotScenario)].loc[PlotStartDate:PlotEndDate,'Genset production'].values
+    y_LostLoad    = TimeSeries['EE']['Sc'+str(PlotScenario)].loc[PlotStartDate:PlotEndDate,'Lost Load'].values
+    y_Curtailment = -1*TimeSeries['EE']['Sc'+str(PlotScenario)].loc[PlotStartDate:PlotEndDate,'Curtailment'].values
+    x_Plot = np.arange(len(y_Genset))
+    y_Stacked = [y_Genset,
+                 y_LostLoad,
+                 y_Curtailment]
+
+    y_Demand = TimeSeries['EE']['Sc'+str(PlotScenario)].loc[PlotStartDate:PlotEndDate,'Demand'].values
+    
+    Colors = ['#8d99ae',
+              '#f72585',
+              '#64dfdf']
+        
+    Labels = ['Genset',
+              'Lost Load',
+              'Curtailment']        
+        
+    "Plot"
+    fig,ax = plt.subplots(figsize=(20,10))
+    
+    ax.stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
+    ax.plot(x_Plot, y_Demand, color='black', label='Demand')
+    
+    ax.set_ylabel('Power (kW)', fontsize=14)
+    ax.set_xlabel('Time (Hours)', fontsize=14)
+
+    "x axis"
+    nDays = int(len(x_Plot)/1440)    
+    xticks_position = []
+    ticks = []
+    for i in range(1,nDays+1):
+        ticks = [d*6 for d in range(nDays*4+1)]
+        xticks_position = [d*6*60 for d in range(nDays*4+1)]
+            
+    ax.set_xticks(xticks_position)
+    ax.set_xticklabels(ticks, fontsize=14)    
+    ax.set_xlim(xmin=0)
+    ax.set_xlim(xmax=xticks_position[-1])
+    ax.margins(x=0)
+                
+    "primary y axis"
+    for tick in ax.yaxis.get_major_ticks():
+        tick.label.set_fontsize(14) 
+    ax.margins(y=0)
+    ax.grid(True)
+
+    fig.legend(bbox_to_anchor=(0.21,0.82), fontsize='15', facecolor='white')
+    
+    plt.savefig('Results/Plots/ElectricDispatch.png', dpi=PlotResolution)
+
+    return
+
+
+#%% ThermalDispatch
+def ThermalDispatch(instance,TimeSeries):
+    
+    "Import params"
+    PlotScenario  = instance.PlotScenario.extract_values()[None]    
+    PlotStartDate = instance.PlotStartDate.extract_values()[None]    
+    PlotEndDate   = instance.PlotEndDate.extract_values()[None]    
+    PlotResolution = instance.PlotResolution.extract_values()[None]    
+    nC = instance.Classes.extract_values()[None]
+
+    fig,axs = plt.subplots(2,2,figsize=(20,20))
+    subplot_rows = 2
+    subplot_cols = 2
+    n_row = list(itertools.chain.from_iterable(itertools.repeat(x, subplot_cols) for x in range(subplot_rows)))
+    n_col = list(itertools.chain.from_iterable(itertools.repeat(list(range(subplot_cols)), subplot_rows)))
+    
+    for c in range(1,nC+1):
+        "Series preparation"
+        y_Boiler      = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].loc[PlotStartDate:PlotEndDate,'Boiler production'].values
+        y_LostLoad    = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].loc[PlotStartDate:PlotEndDate,'Lost Load'].values
+        y_Curtailment = -1*TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].loc[PlotStartDate:PlotEndDate,'Curtailment'].values
+        x_Plot = np.arange(len(y_Boiler))
+        y_Stacked = [y_Boiler,
+                     y_LostLoad,
+                     y_Curtailment]
+    
+        y_Demand = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].loc[PlotStartDate:PlotEndDate,'Demand'].values
+    
+        Colors = ['#8d99ae',
+                  '#f72585',
+                  '#64dfdf']
+            
+        if c==1: 
+            Labels = ['Boiler',
+                      'Lost Load',
+                      'Curtailment']        
+
+        else:
+            Labels = ['_nolegend_','_nolegend_','_nolegend_']
+        
+        "Plot"        
+        axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
+        if c==1:
+            axs[n_row[c-1],n_col[c-1]].plot(x_Plot, y_Demand, color='black', label='Demand')
+        else:
+            axs[n_row[c-1],n_col[c-1]].plot(x_Plot, y_Demand, color='black', label='_nolegend_')
+            
+        if c==1 or c==3:
+            axs[n_row[c-1],n_col[c-1]].set_ylabel('Power (kW)', fontsize=14)
+        if c==3 or c==4:
+            axs[n_row[c-1],n_col[c-1]].set_xlabel('Time (Hours)', fontsize=14)
+    
+        "x axis"
+        nDays = int(len(x_Plot)/1440)    
+        ticks_position = []
+        ticks = []
+        for i in range(1,nDays+1):
+            ticks = [d*6 for d in range(nDays*4+1)]
+            ticks_position = [d*6*60 for d in range(nDays*4+1)]
+
+        axs[n_row[c-1],n_col[c-1]].set_xticks(ticks_position)
+        axs[n_row[c-1],n_col[c-1]].set_xticklabels(ticks, fontsize=14)
+        axs[n_row[c-1],n_col[c-1]].set_xlim(xmin=0)
+        axs[n_row[c-1],n_col[c-1]].set_xlim(xmax=ticks_position[-1])
+        axs[n_row[c-1],n_col[c-1]].margins(x=0)
+        
+        "y axis"
+        for tick in axs[n_row[c-1],n_col[c-1]].yaxis.get_major_ticks():
+                tick.label.set_fontsize(14) 
+        axs[n_row[c-1],n_col[c-1]].margins(y=0)
+        axs[n_row[c-1],n_col[c-1]].grid(True)   
+        
+        axs[0,0].legend(loc='upper_left',fontsize=14, facecolor='white')
+    
+    plt.tight_layout()
+    plt.savefig('Results/Plots/ThermalDispatch.png', bbox_inches='tight', dpi=PlotResolution)
+
+    return

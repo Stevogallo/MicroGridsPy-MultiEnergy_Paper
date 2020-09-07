@@ -62,7 +62,7 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     model.MaxPowerBESSCharge = Constraint(rule=Max_Power_BESS_Charge)    
     model.MaxPowerBESSDischarge = Constraint(rule=Max_Power_BESS_Discharge)    
     model.MaxBESSInflow = Constraint(model.scenario,model.periods, rule=Max_BESS_Inflow)    
-    model.Min_BESS_Outflow = Constraint(model.scenario,model.periods, rule=Min_BESS_Outflow)    
+    model.MinBESSOutflow = Constraint(model.scenario,model.periods, rule=Min_BESS_Outflow)    
 
     model.MaximumGeneratorEnergy = Constraint(model.scenario,model.periods, rule=Maximum_Generator_Energy)    
     model.DieselConsumption = Constraint(model.scenario,model.periods, rule=Diesel_Consumption)    

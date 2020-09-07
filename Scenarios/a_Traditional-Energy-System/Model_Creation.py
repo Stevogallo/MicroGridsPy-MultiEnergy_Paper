@@ -31,8 +31,10 @@ def Model_Creation(model):
     "Plot parameters"
     model.StartDate = Param()                       # Start date of the project
     model.PlotTime = Param()                        # Quantity of days that are going to be plot
-    model.PlotDay = Param()                         # Start day for the plot
+    model.PlotStartDate = Param()                   # Start date for the plot
+    model.PlotEndDate = Param()                     # End date for the plot    
     model.PlotScenario = Param()                    # Scenario for the plot
+    model.PlotResolution = Param()                  # Plot resolution in dpi
         
     "SETS"
     model.periods = RangeSet(1, model.Periods)      # Creation of a set from 1 to the number of periods in each year

@@ -22,7 +22,7 @@ from Constraints import Net_Present_Cost,Scenario_Net_Present_Cost,Total_Investm
     Scenario_Lost_Load_Cost_Th,Total_NG_Cost,Electric_Energy_Balance,Maximum_Generator_Energy,Diesel_Consumption,Maximum_Lost_Load_EE,\
     Thermal_Energy_Balance,Maximum_Boiler_Energy,NG_Consumption,Maximum_Lost_Load_Th,RES_Investment_Cost,BESS_Investment_Cost,\
     RES_OM_Cost,BESS_OM_Cost,BESS_Replacement_Cost,RES_Energy_Production,BESS_State_of_Charge,Maximum_BESS_Charge,Minimum_BESS_Charge,\
-    Max_Power_BESS_Charge,Max_Power_BESS_Discharge,Max_BESS_Inflow,Min_BESS_Outflow
+    Max_Power_BESS_Charge,Max_Power_BESS_Discharge,Max_BESS_Inflow,Max_BESS_Outflow
         
 
 def Model_Resolution(model,datapath="Inputs/data.dat"):   
@@ -63,7 +63,7 @@ def Model_Resolution(model,datapath="Inputs/data.dat"):
     model.MaxPowerBESSCharge = Constraint(rule=Max_Power_BESS_Charge)    
     model.MaxPowerBESSDischarge = Constraint(rule=Max_Power_BESS_Discharge)    
     model.MaxBESSInflow = Constraint(model.scenario,model.periods, rule=Max_BESS_Inflow)    
-    model.Min_BESS_Outflow = Constraint(model.scenario,model.periods, rule=Min_BESS_Outflow)    
+    model.Max_BESS_Outflow = Constraint(model.scenario,model.periods, rule=Max_BESS_Outflow)    
 
     model.MaximumGeneratorEnergy = Constraint(model.scenario,model.periods, rule=Maximum_Generator_Energy)    
     model.DieselConsumption = Constraint(model.scenario,model.periods, rule=Diesel_Consumption)    

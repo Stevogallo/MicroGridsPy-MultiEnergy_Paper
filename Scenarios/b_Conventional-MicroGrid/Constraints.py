@@ -122,7 +122,7 @@ def Max_Power_BESS_Discharge(model):
 def Max_BESS_Inflow(model,s,t):
     return model.BESS_Inflow[s,t] <= model.Maximum_BESS_Charge_Power
 
-def Min_BESS_Outflow(model,s,t):
+def Max_BESS_Outflow(model,s,t):
     return model.BESS_Outflow[s,t] <= model.Maximum_BESS_Discharge_Power
 
 "Diesel generator constraints"

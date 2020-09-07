@@ -45,6 +45,7 @@ def TimeSeries(instance):
     EE_ElRes_Cons  = pd.DataFrame.from_dict(instance.Tot_Electric_Resistance_Energy_Production.get_values(), orient='index')
     # Additional useful terms
     Diesel_Cons    = pd.DataFrame.from_dict(instance.Diesel_Consumption.get_values(), orient='index')
+    BESS_SOC       = pd.DataFrame.from_dict(instance.BESS_State_of_Charge.get_values(), orient='index')
     
     "Thermal energy balance terms"
     Th_Demand       = pd.DataFrame.from_dict(instance.Thermal_Energy_Demand.extract_values(), orient='index')
@@ -57,8 +58,8 @@ def TimeSeries(instance):
     Th_TimeSeries = {}
     
     for s in range(nS):
-       EE_TimeSeries[s] = pd.concat([EE_Demand.iloc[s*nP:(s*nP+nP),:], EE_Lost_Load.iloc[s*nP:(s*nP+nP),:], EE_Curtailment.iloc[s*nP:(s*nP+nP),:], EE_ElRes_Cons.iloc[s*nP:(s*nP+nP),:],  EE_RES.iloc[s*nP:(s*nP+nP),:],  EE_BESS_Out.iloc[s*nP:(s*nP+nP),:], EE_BESS_In.iloc[s*nP:(s*nP+nP),:], EE_Gen_Prod.iloc[s*nP:(s*nP+nP),:], Diesel_Cons.iloc[s*nP:(s*nP+nP),:]], axis=1)
-       EE_TimeSeries[s].columns = ['Demand','Lost Load', 'Curtailment', 'Electric resistance consumption', 'RES production', 'BESS outflow', 'BESS inflow', 'Genset production', 'Diesel consumption']
+       EE_TimeSeries[s] = pd.concat([EE_Demand.iloc[s*nP:(s*nP+nP),:], EE_Lost_Load.iloc[s*nP:(s*nP+nP),:], EE_Curtailment.iloc[s*nP:(s*nP+nP),:], EE_ElRes_Cons.iloc[s*nP:(s*nP+nP),:],  EE_RES.iloc[s*nP:(s*nP+nP),:],  EE_BESS_Out.iloc[s*nP:(s*nP+nP),:], EE_BESS_In.iloc[s*nP:(s*nP+nP),:], EE_Gen_Prod.iloc[s*nP:(s*nP+nP),:], Diesel_Cons.iloc[s*nP:(s*nP+nP),:], BESS_SOC.iloc[s*nP:(s*nP+nP),:]], axis=1)
+       EE_TimeSeries[s].columns = ['Demand','Lost Load', 'Curtailment', 'Electric resistance consumption', 'RES production', 'BESS outflow', 'BESS inflow', 'Genset production', 'Diesel consumption', 'BESS state of charge']
        EE_TimeSeries[s].index = dateInd
        EE_TimeSeries['Sc'+str(s+1)] = EE_TimeSeries.pop(s)
        EE_path = 'Results/TimeSeries/Sc'+str(s+1)

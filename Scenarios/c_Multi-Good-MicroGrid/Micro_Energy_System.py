@@ -13,24 +13,55 @@ Authors:
 """
 
 import time
-from pyomo.environ import AbstractModel
-
-from Results import TimeSeries, EnergySystemInfo
-from Model_Creation import Model_Creation
-from Model_Resolution import Model_Resolution
-
 start = time.time()
 
-model = AbstractModel() # define type of optimization problem
+plotMode = 'On'
 
-#%% Optimization model
-Model_Creation(model) # Creation of the Sets, parameters and variables.
-instance = Model_Resolution(model) # Resolution of the instance
 
-#%% Result export
-TimeSeries = TimeSeries(instance) # Extract the results of energy from the instance and save it in a excel file 
-EnergySystemSize,EnergySystemCost,EnergyIndicators = EnergySystemInfo(instance)
+if plotMode != 'On':
+    
+    from pyomo.environ import AbstractModel
+    from Results import TimeSeries, EnergySystemInfo
+    from Model_Creation import Model_Creation
+    from Model_Resolution import Model_Resolution
+    from Plots import ElectricLoadCurves,ThermalLoadCurves,ElectricDispatch,ThermalDispatch
 
+    model = AbstractModel()  # Define type of optimization problem
+
+    #%% Optimization model
+    Model_Creation(model)  # Creation of the Sets, parameters and variables.
+    instance = Model_Resolution(model)  # Resolution of the instance
+    
+    #%% Result export
+    TimeSeries = TimeSeries(instance)  # Extract the results of energy from the instance and save it in a excel file 
+    EnergySystemSize,EnergySystemCost,EnergyIndicators = EnergySystemInfo(instance)
+    
+    #%% Plot
+    ElectricLoadCurves(instance)
+    ThermalLoadCurves(instance)
+    ElectricDispatch(instance,TimeSeries)
+    ThermalDispatch(instance,TimeSeries)
+
+else:
+    import pandas as pd
+    from PlotMode import ElectricLoadCurves,ThermalLoadCurves,ElectricDispatch,ThermalDispatch
+    
+    idx = pd.IndexSlice
+    
+    "Import params"
+    StartDate = '01/07/2017 00:00:00' 
+    PlotScenario  = 1    
+    PlotStartDate = 504000    
+    PlotEndDate   = 504000+1441    
+    PlotResolution = 300   
+    nS = 1
+    nC = 4
+
+    ElectricLoadCurves(StartDate,PlotResolution)
+    ThermalLoadCurves(StartDate,PlotResolution)
+    ElectricDispatch(nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution)
+    ThermalDispatch(nC,nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution)
+    
 
 end = time.time()
 elapsed = end - start

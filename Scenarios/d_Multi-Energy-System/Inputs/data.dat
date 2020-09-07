@@ -1,9 +1,12 @@
-param: Periods := 525600;                                  # Number of periods per year of analysis of the energy variables
+param: Periods := 5000;                               # Number of periods per year of analysis of the energy variables
 param: Years := 20;                                     # Number of years of the project
-param: StartDate := '01/01/2017 00:00:00';              # Start date and time of the project
+param: StartDate := '01/07/2017 00:00:00';              # Start date and time of the project
+
 param: PlotTime := 1;                                   # Quantity of days that are going to be plot
-param: PlotDay := '01/01/2017 01:00:00';                # Start day for the plot
+param: PlotStartDate := '01/07/2017 00:00:00';          # Start day for the plot
+param: PlotEndDate := '01/08/2017 00:00:00';            # End day for the plot
 param: PlotScenario := 1;                               # Scenario for the plot
+param: PlotResolution := 300;                           # Plot resolution in dpi
 param: Delta_Time := 1/60;                              # Time step in hours
 
 
