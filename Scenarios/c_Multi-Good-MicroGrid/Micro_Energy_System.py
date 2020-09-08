@@ -15,7 +15,7 @@ Authors:
 import time
 start = time.time()
 
-plotMode = 'On'
+plotMode = 'Off'
 
 
 if plotMode != 'On':
