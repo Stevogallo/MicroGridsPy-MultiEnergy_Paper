@@ -190,8 +190,8 @@ def ElectricDispatch(nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution):
     ax2=ax.twinx()
 
     ax.stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
-    ax.fill_between(x=x_Plot, y1=y_BESS_in, y2=0, color='#3a86ff')
-    ax.fill_between(x=x_Plot, y1=y_ElResCons, y2=y_BESS_in, color='#aacc00',label='Resistance')
+    ax.fill_between(x=x_Plot, y1=deltaBESS_neg, y2=0, color='#3a86ff')
+    ax.fill_between(x=x_Plot, y1=y_ElResCons, y2=deltaBESS_neg, color='#aacc00',label='Resistance')
     ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='BESS state of charge')
     ax.plot(x_Plot, y_Demand, color='black', label='Demand')
     ax.plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_')

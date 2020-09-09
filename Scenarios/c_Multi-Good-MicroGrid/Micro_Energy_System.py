@@ -15,7 +15,7 @@ Authors:
 import time
 start = time.time()
 
-plotMode = 'Off'
+plotMode = 'On'
 
 
 if plotMode != 'On':
@@ -51,8 +51,8 @@ else:
     "Import params"
     StartDate = '01/07/2017 00:00:00' 
     PlotScenario  = 1    
-    PlotStartDate = 504000    
-    PlotEndDate   = 504000+1441    
+    PlotStartDate = 216000    
+    PlotEndDate   = 216000+1441    
     PlotResolution = 300   
     nS = 1
     nC = 4
