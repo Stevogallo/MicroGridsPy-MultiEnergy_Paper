@@ -260,33 +260,28 @@ def ThermalDispatch(nC,nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution)
         y_Boiler      = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,5].values
         y_ElResProd   = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,6].values        
         y_LostLoad    = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,1].values
-        y_Tank_Out    = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,3].values        
-        y_Tank_In     = -1*TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,4].values                
-        y_Curtailment = -1*TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,7].values
+        y_Tank_Out    = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,3].values     
+        y_Demand      = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,0].values
+        y_Tank_SOC    = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,-1].values/TankNominalCapacity*100   
         x_Plot = np.arange(len(y_Boiler))
-        y_Stacked = [y_SC,
-                     y_Tank_Out,
-                     y_ElResProd,
+        
+        deltaTank = y_Tank_Out - y_Demand
+    
+        for i in range(deltaTank.shape[0]):
+            if deltaTank[i] < 0:   
+                y_Stacked = [y_Tank_Out,
                      y_Boiler,
-                     y_LostLoad,
-                     y_Curtailment]
-    
-        y_Demand   = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,0].values
-        y_Tank_SOC = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,-1].values/TankNominalCapacity*100
-    
-        Colors = ['#ffbe0b',
-                  '#3a86ff',
-                  '#aacc00',
+                     y_LostLoad]
+            if deltaTank[i] > 0:   
+                y_Stacked = [y_Demand]
+     
+        Colors = ['#3a86ff',
                   '#8d99ae',
-                  '#f72585',
-                  '#64dfdf']
+                  '#f72585']
         if c==1:             
-            Labels = ['Solar collector',
-                      'Storage',
-                      'Resistance',
+            Labels = ['Tank Out',
                       'Boiler',
-                      'Lost load',
-                      'Curtailment']        
+                      'Lost load']        
         else:
             Labels = ['_nolegend_','_nolegend_','_nolegend_','_nolegend_','_nolegend_','_nolegend_']
        
@@ -294,7 +289,6 @@ def ThermalDispatch(nC,nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution)
 
         "Plot"
         axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
-        axs[n_row[c-1],n_col[c-1]].fill_between(x=x_Plot, y1=y_Tank_In, y2=0, color='#3a86ff')
         if c==1:
             axs[n_row[c-1],n_col[c-1]].plot(x_Plot, y_Demand, color='black', label='Demand')
             ax2.plot(x_Plot, y_Tank_SOC, '--', color='black', label='Tank state of charge')
