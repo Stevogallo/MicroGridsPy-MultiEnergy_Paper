@@ -264,7 +264,6 @@ def ThermalDispatch(nC,nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution)
         y_Demand      = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,0].values
         y_Tank_SOC    = TimeSeries['Th']['Sc'+str(PlotScenario)]['Class'+str(c)].iloc[PlotStartDate:PlotEndDate,-1].values/TankNominalCapacity*100   
         x_Plot = np.arange(len(y_Boiler))
-        
         deltaTank = y_Tank_Out - y_Demand
     
         for i in range(deltaTank.shape[0]):
@@ -288,13 +287,20 @@ def ThermalDispatch(nC,nS,PlotScenario,PlotStartDate,PlotEndDate,PlotResolution)
         ax2=axs[n_row[c-1],n_col[c-1]].twinx()
 
         "Plot"
-        axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
+        axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors, alpha=0.7)
+
         if c==1:
             axs[n_row[c-1],n_col[c-1]].plot(x_Plot, y_Demand, color='black', label='Demand')
+            axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_SC, labels='Solar Collector', colors='#ffbe0b', alpha=0.5)
+            axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_ElResProd, labels='Resistance', colors='#aacc00', alpha=0.5)
+
             ax2.plot(x_Plot, y_Tank_SOC, '--', color='black', label='Tank state of charge')
         else:
             axs[n_row[c-1],n_col[c-1]].plot(x_Plot, y_Demand, color='black', label='_nolegend_')
             ax2.plot(x_Plot, y_Tank_SOC, '--', color='black', label='_nolegend_')
+            axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_SC, labels='_nolegend_', colors='#ffbe0b', alpha=0.5)
+            axs[n_row[c-1],n_col[c-1]].stackplot(x_Plot, y_ElResProd, labels='_nolegend_', colors='#aacc00', alpha=0.5)
+
 
         if c==1 or c==3:
             axs[n_row[c-1],n_col[c-1]].set_ylabel('Power (kW)', fontsize=14)
