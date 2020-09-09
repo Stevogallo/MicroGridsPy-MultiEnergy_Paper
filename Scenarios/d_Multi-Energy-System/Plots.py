@@ -157,8 +157,18 @@ def ElectricDispatch(instance,TimeSeries):
     y_LostLoad    = TimeSeries['EE']['Sc'+str(PlotScenario)].loc[PlotStartDate:PlotEndDate,'Lost Load'].values
     y_Curtailment = -1*TimeSeries['EE']['Sc'+str(PlotScenario)].loc[PlotStartDate:PlotEndDate,'Curtailment'].values
     x_Plot = np.arange(len(y_Genset))
+
+    deltaBESS_pos = y_BESS_out + y_BESS_in
+    deltaBESS_neg = y_BESS_out + y_BESS_in
+    
+    for i in range(deltaBESS_pos.shape[0]):
+        if deltaBESS_pos[i] < 0:   
+            deltaBESS_pos[i] *= 0
+        if deltaBESS_neg[i] > 0:   
+            deltaBESS_neg[i] *= 0
+
     y_Stacked = [y_RES,
-                 y_BESS_out,
+                 deltaBESS_pos,
                  y_Genset,
                  y_LostLoad,
                  y_Curtailment]
