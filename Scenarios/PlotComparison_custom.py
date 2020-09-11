@@ -21,79 +21,34 @@ import itertools
 import warnings
 warnings.filterwarnings("ignore")
 
-"Import params"
-StartDate = '01/07/2017 00:00:00' 
-PlotScenario  = 1    
-PlotResolution = 1000 
-PlotStartDate = 216000    
-PlotEndDate   = 216000+1441      
-nS = 1
-nC = 4
-fontticks = 18
-fonttitles = 22
-fontaxis = 20
-fontlegend = 20
 
-idx = pd.IndexSlice
-
-Electric_Energy_Demand = pd.read_csv('a_Traditional-Energy-System/Inputs/Electric_Demand.csv', sep=';', index_col=0) # Import electricity demand
-Electric_Energy_Demand = Electric_Energy_Demand.round(3)
-Thermal_Energy_Demand = pd.read_csv('a_Traditional-Energy-System/Inputs/Thermal_Demand.csv', sep=';',  index_col=0) # Import thermal energy demand
-Thermal_Energy_Demand = Thermal_Energy_Demand.round(3)
-    
-Electric_Energy_Demand.index = pd.DatetimeIndex(start=StartDate, periods=525600, freq='1min')
-Thermal_Energy_Demand.index = pd.DatetimeIndex(start=StartDate, periods=525600, freq='1min')
-
-StartDatePlot = ['12/23/2017 00:00:00','03/23/2017 00:00:00','06/23/2017 00:00:00','09/23/2017 00:00:00'] # MM/DD/YY
-EndDatePlot   = ['12/23/2017 23:59:59','03/23/2017 23:59:59','06/23/2017 23:59:59','09/23/2017 23:59:59']
-
-y_Plot1 = Electric_Energy_Demand.loc[StartDatePlot[0]:EndDatePlot[0], :].values
-y_Plot2 = Electric_Energy_Demand.loc[StartDatePlot[1]:EndDatePlot[1], :].values
-y_Plot3 = Electric_Energy_Demand.loc[StartDatePlot[2]:EndDatePlot[2], :].values
-y_Plot4 = Electric_Energy_Demand.loc[StartDatePlot[3]:EndDatePlot[3], :].values
-x_Plot  = np.arange(len(y_Plot1))
-
-
-"Plot"
-fig = plt.figure(figsize=(20,20))
-
-#%% Electric load curve
-ax1 = plt.subplot2grid((3,2),(0,0),colspan=2)
-
-ax1.plot(x_Plot, y_Plot4, '#2e279d', label='_nolegend_')
-ax1.plot(x_Plot, y_Plot1, '#4d80e4', label='_nolegend_')
-ax1.plot(x_Plot, y_Plot2, '#46b3e6', label='_nolegend_')
-ax1.plot(x_Plot, y_Plot3, '#dff6f0', label='_nolegend_')
-
-ax1.set_xlabel('Time (Hours)', fontsize=fontaxis)
-ax1.set_xlim(xmin=0)
-ax1.set_xlim(xmax=60*24+1)
-ax1.set_xticks([0,(4*60),(8*60),(60*12),(60*16),(60*20),(60*24)])
-ax1.set_xticklabels([0,4,8,12,16,20,24], fontsize=fontticks)
-ax1.margins(x=0)
-
-ax1.set_ylabel('Power (kW)', fontsize=fontaxis)
-ax1.set_ylim(ymin=0)
-ax1.set_ylim(ymax=200)
-ax1.set_yticks(np.arange(0,201,50))
-ax1.set_yticklabels(np.arange(0,201,50), fontsize=fontticks)
-ax1.margins(y=0)
-
-ax1.grid(True)
-ax1.legend(loc='upper left', fontsize=fontlegend, facecolor='white')
-
-
-# %% Electric dispatch
 configurations = ['a_Traditional-Energy-System',
                   'b_Conventional-MicroGrid',
                   'c_Multi-Good-MicroGrid',
                   'd_Multi-Energy-System']
 
+"Import params"
+StartDate = '01/07/2017 00:00:00' 
+PlotScenario  = 1    
+PlotStartDate = 216000    
+PlotEndDate   = 216000+1441    
+PlotResolution = 600   
+nS = 1
+nC = 4
+fontticks = 14
+fonttitles = 18
+fontaxis = 16
+
+idx = pd.IndexSlice
 
 TimeSeries = {}
 
-subplot_rows = [1,1,2,2]
-subplot_cols = [0,1,0,1]
+subplot_rows = 2
+subplot_cols = 2
+fig,axs = plt.subplots(subplot_rows,subplot_cols,figsize=(25,20))
+
+n_row = list(itertools.chain.from_iterable(itertools.repeat(x, subplot_cols) for x in range(subplot_rows)))
+n_col = list(itertools.chain.from_iterable(itertools.repeat(list(range(subplot_cols)), subplot_rows)))
 
 k=0
 for c in configurations:
@@ -128,16 +83,14 @@ for c in configurations:
         Labels = ['Genset',
                   '_nolegend_',
                   '_nolegend_']        
-    
-        axs = plt.subplot2grid((3,2),(subplot_rows[k],subplot_cols[k]),colspan=1)
-
-        axs.stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors, zorder=2)
-        axs.plot(x_Plot, y_Demand, color='black', label='Demand', zorder=2)
-        axs.plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_', zorder=2)
+                
+        axs[n_row[k],n_col[k]].stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
+        axs[n_row[k],n_col[k]].plot(x_Plot, y_Demand, color='black', label='Demand')
+        axs[n_row[k],n_col[k]].plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_')
         
-        axs.set_ylabel('Power (kW)', fontsize=fontaxis)
+        axs[n_row[k],n_col[k]].set_ylabel('Power (kW)', fontsize=fontaxis)
     
-        axs.set_title('a) Traditional energy system', fontsize=fonttitles)
+        axs[n_row[k],n_col[k]].set_title(c, fontsize=fonttitles)
 
         "x axis"
         nDays = int(len(x_Plot)/1440)    
@@ -147,18 +100,18 @@ for c in configurations:
             ticks = ['' for d in range(nDays*4+1)]
             xticks_position = [d*6*60 for d in range(nDays*4+1)]
                 
-        axs.set_xticks(xticks_position)
-        axs.set_xticklabels(ticks, fontsize=fontticks)    
-        axs.set_xlim(xmin=0)
-        axs.set_xlim(xmax=xticks_position[-1])
-        axs.margins(x=0)
+        axs[n_row[k],n_col[k]].set_xticks(xticks_position)
+        axs[n_row[k],n_col[k]].set_xticklabels(ticks, fontsize=fontticks)    
+        axs[n_row[k],n_col[k]].set_xlim(xmin=0)
+        axs[n_row[k],n_col[k]].set_xlim(xmax=xticks_position[-1])
+        axs[n_row[k],n_col[k]].margins(x=0)
     
         "primary y axis"
-        axs.set_yticks(np.arange(0,351,25))
-        axs.set_yticklabels(np.arange(0,351,25), fontsize=fontticks) 
-        axs.set_ylim(ymin=0)
-        axs.set_ylim(ymax=351)        
-        axs.grid(True, zorder=1, color='#EBEAEA')
+        axs[n_row[k],n_col[k]].set_yticks(np.arange(-350,351,50))
+        axs[n_row[k],n_col[k]].set_yticklabels(np.arange(-350,351,50), fontsize=fontticks) 
+        axs[n_row[k],n_col[k]].set_ylim(ymin=-350)
+        axs[n_row[k],n_col[k]].set_ylim(ymax=351)        
+        axs[n_row[k],n_col[k]].grid(True)
         
         k+=1
 
@@ -205,17 +158,15 @@ for c in configurations:
                   '_nolegend_',
                   '_nolegend_',
                   '_nolegend_']        
-        
-        axs = plt.subplot2grid((3,2),(subplot_rows[k],subplot_cols[k]),colspan=1)
-
+            
         "Plot"
-        ax2=axs.twinx()
+        ax2=axs[n_row[k],n_col[k]].twinx()
     
-        axs.stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors, zorder=2)
-        axs.fill_between(x=x_Plot, y1=deltaBESS_neg, y2=0, color='#3a86ff', zorder=2)
-        ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='BESS state of charge', zorder=2)
-        axs.plot(x_Plot, y_Demand, color='black', label='_nolegend_', zorder=2)
-        axs.plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_', zorder=2)
+        axs[n_row[k],n_col[k]].stackplot(x_Plot, y_Stacked, labels=Labels, colors=Colors)
+        axs[n_row[k],n_col[k]].fill_between(x=x_Plot, y1=deltaBESS_neg, y2=0, color='#3a86ff')
+        ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='BESS state of charge')
+        axs[n_row[k],n_col[k]].plot(x_Plot, y_Demand, color='black', label='_nolegend_')
+        axs[n_row[k],n_col[k]].plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_')
         
         ax2.set_ylabel('State of Charge (%)', fontsize=fontaxis)
     
@@ -227,20 +178,20 @@ for c in configurations:
             ticks = ['' for d in range(nDays*4+1)]
             xticks_position = [d*6*60 for d in range(nDays*4+1)]
                 
-        axs.set_xticks(xticks_position)
-        axs.set_xticklabels(ticks, fontsize=fontticks)    
-        axs.set_xlim(xmin=0)
-        axs.set_xlim(xmax=xticks_position[-1])
-        axs.margins(x=0)
+        axs[n_row[k],n_col[k]].set_xticks(xticks_position)
+        axs[n_row[k],n_col[k]].set_xticklabels(ticks, fontsize=fontticks)    
+        axs[n_row[k],n_col[k]].set_xlim(xmin=0)
+        axs[n_row[k],n_col[k]].set_xlim(xmax=xticks_position[-1])
+        axs[n_row[k],n_col[k]].margins(x=0)
     
-        axs.set_title('b) Conventional micro-grid', fontsize=fonttitles)
+        axs[n_row[k],n_col[k]].set_title(c, fontsize=fonttitles)
 
         "primary y axis"
-        axs.set_yticks(np.arange(-350,351,50))
-        axs.set_yticklabels(np.arange(-350,351,50), fontsize=fontticks) 
-        axs.set_ylim(ymin=-350)
-        axs.set_ylim(ymax=351)        
-        axs.grid(True, zorder=1, color='#EBEAEA')
+        axs[n_row[k],n_col[k]].set_yticks(np.arange(-350,351,50))
+        axs[n_row[k],n_col[k]].set_yticklabels(np.arange(-350,351,50), fontsize=fontticks) 
+        axs[n_row[k],n_col[k]].set_ylim(ymin=-350)
+        axs[n_row[k],n_col[k]].set_ylim(ymax=351)        
+        axs[n_row[k],n_col[k]].grid(True)
            
         "secondary y axis"
         ax2.set_yticks(np.arange(0,101,20))
@@ -304,20 +255,18 @@ for c in configurations:
 
         Labels_neg = ['_nolegend_',
                   'Resistance']        
-
-        axs = plt.subplot2grid((3,2),(subplot_rows[k],subplot_cols[k]),colspan=1)
-
+            
         "Plot"
-        ax2=axs.twinx()
+        ax2=axs[n_row[k],n_col[k]].twinx()
     
-        axs.stackplot(x_Plot, y_Stacked_pos, labels=Labels_pos, colors=Colors_pos, zorder=2)
-        axs.stackplot(x_Plot, y_Stacked_neg, labels=Labels_neg, colors=Colors_neg, zorder=2)
-        ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='_nolegend_', zorder=2)
-        axs.plot(x_Plot, y_Demand, color='black', label='_nolegend_', zorder=2)
-        axs.plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_', zorder=2)
+        axs[n_row[k],n_col[k]].stackplot(x_Plot, y_Stacked_pos, labels=Labels_pos, colors=Colors_pos)
+        axs[n_row[k],n_col[k]].stackplot(x_Plot, y_Stacked_neg, labels=Labels_neg, colors=Colors_neg)
+        ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='_nolegend_')
+        axs[n_row[k],n_col[k]].plot(x_Plot, y_Demand, color='black', label='_nolegend_')
+        axs[n_row[k],n_col[k]].plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_')
  
-        axs.set_ylabel('Power (kW)', fontsize=fontaxis)
-        axs.set_xlabel('Time (Hours)', fontsize=fontaxis)
+        axs[n_row[k],n_col[k]].set_ylabel('Power (kW)', fontsize=fontaxis)
+        axs[n_row[k],n_col[k]].set_xlabel('Time (Hours)', fontsize=fontaxis)
 
             
         "x axis"
@@ -328,21 +277,21 @@ for c in configurations:
             ticks = [d*6 for d in range(nDays*4+1)]
             xticks_position = [d*6*60 for d in range(nDays*4+1)]
                 
-        axs.set_xticks(xticks_position)
-        axs.set_xticklabels(ticks, fontsize=fontticks)    
-        axs.set_xlim(xmin=0)
-        axs.set_xlim(xmax=xticks_position[-1])
-        axs.margins(x=0)
+        axs[n_row[k],n_col[k]].set_xticks(xticks_position)
+        axs[n_row[k],n_col[k]].set_xticklabels(ticks, fontsize=fontticks)    
+        axs[n_row[k],n_col[k]].set_xlim(xmin=0)
+        axs[n_row[k],n_col[k]].set_xlim(xmax=xticks_position[-1])
+        axs[n_row[k],n_col[k]].margins(x=0)
         
-        axs.set_title('c) Multi-good micro-grid', fontsize=fonttitles)
+        axs[n_row[k],n_col[k]].set_title(c, fontsize=fonttitles)
         
         "primary y axis"
-        axs.set_yticks(np.arange(-1500,1501,250))
-        axs.set_yticklabels(np.arange(-1500,1501,250), fontsize=fontticks)  
-        axs.set_ylim(ymin=-1500)
-        axs.set_ylim(ymax=1501)        
-        axs.margins(y=0)
-        axs.grid(True, zorder=1, color='#EBEAEA')
+        axs[n_row[k],n_col[k]].set_yticks(np.arange(-1500,1501,250))
+        axs[n_row[k],n_col[k]].set_yticklabels(np.arange(-1500,1501,250), fontsize=fontticks)  
+        axs[n_row[k],n_col[k]].set_ylim(ymin=-1500)
+        axs[n_row[k],n_col[k]].set_ylim(ymax=1501)        
+        axs[n_row[k],n_col[k]].margins(y=0)
+        axs[n_row[k],n_col[k]].grid(True)
            
         "secondary y axis"
         ax2.set_yticks(np.arange(0,101,20))
@@ -406,19 +355,17 @@ for c in configurations:
 
         Labels_neg = ['_nolegend_',
                   '_nolegend_']        
-
-        axs = plt.subplot2grid((3,2),(subplot_rows[k],subplot_cols[k]),colspan=1)
-
+            
         "Plot"
-        ax2=axs.twinx()
+        ax2=axs[n_row[k],n_col[k]].twinx()
     
-        axs.stackplot(x_Plot, y_Stacked_pos, labels=Labels_pos, colors=Colors_pos, zorder=2)
-        axs.stackplot(x_Plot, y_Stacked_neg, labels=Labels_neg, colors=Colors_neg, zorder=2)
-        ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='_nolegend_', zorder=2)
-        axs.plot(x_Plot, y_Demand, color='black', label='_nolegend_', zorder=2)
-        axs.plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_', zorder=2)
+        axs[n_row[k],n_col[k]].stackplot(x_Plot, y_Stacked_pos, labels=Labels_pos, colors=Colors_pos)
+        axs[n_row[k],n_col[k]].stackplot(x_Plot, y_Stacked_neg, labels=Labels_neg, colors=Colors_neg)
+        ax2.plot(x_Plot, y_BESS_SOC, '--', color='black', label='_nolegend_')
+        axs[n_row[k],n_col[k]].plot(x_Plot, y_Demand, color='black', label='_nolegend_')
+        axs[n_row[k],n_col[k]].plot(x_Plot, np.zeros((len(x_Plot))), color='black', label='_nolegend_')
  
-        axs.set_xlabel('Time (Hours)', fontsize=fontaxis)
+        axs[n_row[k],n_col[k]].set_xlabel('Time (Hours)', fontsize=fontaxis)
         ax2.set_ylabel('State of Charge (%)', fontsize=fontaxis)
             
         "x axis"
@@ -429,21 +376,21 @@ for c in configurations:
             ticks = [d*6 for d in range(nDays*4+1)]
             xticks_position = [d*6*60 for d in range(nDays*4+1)]
                 
-        axs.set_xticks(xticks_position)
-        axs.set_xticklabels(ticks, fontsize=fontticks)    
-        axs.set_xlim(xmin=0)
-        axs.set_xlim(xmax=xticks_position[-1])
-        axs.margins(x=0)
+        axs[n_row[k],n_col[k]].set_xticks(xticks_position)
+        axs[n_row[k],n_col[k]].set_xticklabels(ticks, fontsize=fontticks)    
+        axs[n_row[k],n_col[k]].set_xlim(xmin=0)
+        axs[n_row[k],n_col[k]].set_xlim(xmax=xticks_position[-1])
+        axs[n_row[k],n_col[k]].margins(x=0)
         
-        axs.set_title('d) Integrated multi-energy system', fontsize=fonttitles)
+        axs[n_row[k],n_col[k]].set_title(c, fontsize=fonttitles)
         
         "primary y axis"
-        axs.set_yticks(np.arange(-350,351,50))
-        axs.set_yticklabels(np.arange(-350,351,50), fontsize=fontticks) 
-        axs.set_ylim(ymin=-350)
-        axs.set_ylim(ymax=351)        
-        axs.margins(y=0)
-        axs.grid(True, zorder=1, color='#EBEAEA')
+        axs[n_row[k],n_col[k]].set_yticks(np.arange(-350,351,50))
+        axs[n_row[k],n_col[k]].set_yticklabels(np.arange(-350,351,50), fontsize=fontticks) 
+        axs[n_row[k],n_col[k]].set_ylim(ymin=-350)
+        axs[n_row[k],n_col[k]].set_ylim(ymax=351)        
+        axs[n_row[k],n_col[k]].margins(y=0)
+        axs[n_row[k],n_col[k]].grid(True)
            
         "secondary y axis"
         ax2.set_yticks(np.arange(0,101,20))
@@ -454,10 +401,10 @@ for c in configurations:
     
         k+=1        
                
-fig.legend(bbox_to_anchor=(0.43,0.65), ncol=2, fontsize=fontlegend, facecolor='white')
+fig.legend(bbox_to_anchor=(0.18,0.97), fontsize=fontaxis, facecolor='white')
 fig.tight_layout()    
 
-pylab.savefig('ElectricDispatch_allCases.svg', format='svg')
+pylab.savefig('ElectricDispatch_allCases.png', dpi=PlotResolution)
                     
 
 
