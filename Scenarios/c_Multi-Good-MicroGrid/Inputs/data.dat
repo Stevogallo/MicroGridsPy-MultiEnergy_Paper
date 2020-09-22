@@ -3,8 +3,8 @@ param: Years := 20;                                     # Number of years of the
 param: StartDate := '01/07/2017 00:00:00';              # Start date and time of the project
 
 param: PlotTime := 1;                                   # Quantity of days that are going to be plot
-param: PlotStartDate := '05/07/2017 00:00:00';          # Start day for the plot
-param: PlotEndDate := '05/08/2017 00:00:00';            # End day for the plot
+param: PlotStartDate := '01/07/2017 00:00:00';          # Start day for the plot
+param: PlotEndDate := '01/08/2017 00:00:00';            # End day for the plot
 param: PlotScenario := 1;                               # Scenario for the plot
 param: PlotResolution := 300;                           # Plot resolution in dpi
 param: Delta_Time := 1/60;                              # Time step in hours
