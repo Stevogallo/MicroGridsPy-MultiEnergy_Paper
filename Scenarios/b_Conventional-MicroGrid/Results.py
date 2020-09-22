@@ -147,10 +147,9 @@ def EnergySystemInfo(instance):
     Boiler_Investment_Cost = pd.concat([pd.DataFrame(['Investment Cost', 'NG Boiler', '-', 'MUSD']).T, Boiler_Investment_Cost], axis=1).set_index([0,1,2,3])
 
     BESS_Replacement_Cost = instance.BESS_Replacement_Cost.extract_values()[None]
-    BESS_Replacement_Cost = pd.DataFrame(['Replacement Cost', 'Battery Storage System', '-', 'MUSD', BESS_Investment_Cost/1e6]).T.set_index([0,1,2,3])
+    BESS_Replacement_Cost = pd.DataFrame(['Replacement Cost', 'Battery Storage System', '-', 'MUSD', BESS_Replacement_Cost/1e6]).T.set_index([0,1,2,3])
     BESS_Replacement_Cost.columns = ['Total']
 
-    
     "Fixed Costs"   
     RES_OM_Cost = instance.RES_OM_Cost.extract_values()[None]
     RES_OM_Cost = pd.DataFrame(['Fixed Cost', 'RES', '-', 'MUSD', RES_OM_Cost/1e6]).T.set_index([0,1,2,3])
@@ -203,7 +202,7 @@ def EnergySystemInfo(instance):
     
   
     "Concatenating"
-    EE_Inv_Cost = pd.concat([RES_Investment_Cost,BESS_Investment_Cost,  Gen_Investment_Cost], axis=0)
+    EE_Inv_Cost = pd.concat([RES_Investment_Cost,BESS_Investment_Cost, Gen_Investment_Cost], axis=0)
     EE_Inv_Cost.index.names = NPC.index.names
     
     Th_Inv_Cost = pd.concat([Boiler_Investment_Cost], axis=0)
@@ -216,7 +215,7 @@ def EnergySystemInfo(instance):
     Th_OM_Cost.index.names = NPC.index.names
 
     EnergySystemFixedCost = pd.concat([NPC, EE_Inv_Cost, Th_Inv_Cost, EE_OM_Cost, Th_OM_Cost],axis=0).fillna("-")
-    EnergySystemVarCost = pd.concat([Total_Diesel_Cost, Total_NG_Cost, EE_LL_Cost, Th_LL_Cost], axis=0).fillna("-")
+    EnergySystemVarCost = pd.concat([BESS_Replacement_Cost, Total_Diesel_Cost, Total_NG_Cost, EE_LL_Cost, Th_LL_Cost], axis=0).fillna("-")
     EnergySystemCost = pd.concat([EnergySystemFixedCost, EnergySystemVarCost], axis=0)
 
     
@@ -289,9 +288,4 @@ def EnergySystemInfo(instance):
 
 
     return(EnergySystemSize, EnergySystemCost, EnergyIndicators)
-
-
-
-
-    
 

@@ -148,7 +148,7 @@ for s in range(1,nS+1):
             axs.plot(x_Plot, y_Demand, color='black', label='Demand', zorder=2)
             ax2.plot(x_Plot, y_Tank_SOC, '--', color='black', label='_nolegend_', zorder=2)
             
-            hatches=["\\", "","",""]
+            hatches=["\\","","",""]
             for stack, hatch in zip(stacks1, hatches):
                 stack.set_hatch(hatch)
 
@@ -166,7 +166,7 @@ for s in range(1,nS+1):
             axs.plot(x_Plot, y_Demand, color='black', label='_nolegend_', zorder=2)
             ax2.plot(x_Plot, y_Tank_SOC, '--', color='black', label='Tank state of\ncharge', zorder=2)
 
-            hatches=["\\", "","",""]
+            hatches=["\\","","",""]
             for stack, hatch in zip(stacks1, hatches):
                 stack.set_hatch(hatch)
 
@@ -253,13 +253,13 @@ for s in range(1,nS+1):
         else:
             ax2.set_yticklabels(['' for i in range(len(np.arange(0,100.00000001,20)))], fontsize=fontticks)
         ax2.set_ylim(ymin=0)
-        ax2.set_ylim(ymax=101)
+        ax2.set_ylim(ymax=100.00000001)
         ax2.margins(y=0)
                
-fig.legend(bbox_to_anchor=(0.23,0.655), ncol=1, fontsize=fontlegend, frameon=False)
-fig.tight_layout()    
-
-pylab.savefig('Figure8.pdf', format='pdf')
+    fig.legend(bbox_to_anchor=(0.23,0.655), ncol=1, fontsize=fontlegend, frameon=False)
+    fig.tight_layout()    
+    
+    pylab.savefig('Figure8.svg', format='svg')
                     
 
 
