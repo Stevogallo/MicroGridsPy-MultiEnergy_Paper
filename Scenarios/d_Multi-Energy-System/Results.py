@@ -180,7 +180,7 @@ def EnergySystemInfo(instance):
     ElRes_Investment_Cost = pd.concat([pd.DataFrame(['Investment Cost', 'Electric resistance', '-', 'MUSD']).T, ElRes_Investment_Cost], axis=1).set_index([0,1,2,3])
 
     BESS_Replacement_Cost = instance.BESS_Replacement_Cost.extract_values()[None]
-    BESS_Replacement_Cost = pd.DataFrame(['Replacement Cost', 'Battery Storage System', '-', 'MUSD', BESS_Investment_Cost/1e6]).T.set_index([0,1,2,3])
+    BESS_Replacement_Cost = pd.DataFrame(['Replacement Cost', 'Battery Storage System', '-', 'MUSD', BESS_Replacement_Cost/1e6]).T.set_index([0,1,2,3])
     BESS_Replacement_Cost.columns = ['Total']
 
     
@@ -265,7 +265,7 @@ def EnergySystemInfo(instance):
     Th_OM_Cost.index.names = NPC.index.names
 
     EnergySystemFixedCost = pd.concat([NPC, EE_Inv_Cost, Th_Inv_Cost, EE_OM_Cost, Th_OM_Cost],axis=0).fillna("-")
-    EnergySystemVarCost = pd.concat([Total_Diesel_Cost, Total_NG_Cost, EE_LL_Cost, Th_LL_Cost], axis=0).fillna("-")
+    EnergySystemVarCost = pd.concat([BESS_Replacement_Cost, Total_Diesel_Cost, Total_NG_Cost, EE_LL_Cost, Th_LL_Cost], axis=0).fillna("-")
     EnergySystemCost = pd.concat([EnergySystemFixedCost, EnergySystemVarCost], axis=0)
 
 
