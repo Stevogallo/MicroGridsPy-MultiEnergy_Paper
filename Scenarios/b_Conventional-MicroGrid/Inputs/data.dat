@@ -31,7 +31,7 @@ param: BESS_Charge_Efficiency := 0.95;                  # Efficiency of the char
 param: BESS_Depth_of_Discharge := 0.2;                  # Depth of discharge of the battery in %
 param: BESS_Maximum_Discharge_Time := 5;                # Maximum time of discharge of the battery in hours
 param: BESS_Maximum_Charge_Time := 5;                   # Maximum time of charge of the battery in hours
-param: BESS_Replacement_Time := 20;                     # Period of replacement of the battery in years
+param: BESS_Replacement_Time := 10;                     # Period of replacement of the battery in years
 param: BESS_Inv_Specific_Cost := 550;                   # Investment cost of battery in USD/kWh
 param: BESS_OM_Specific_Cost := 0.02;                   # % of the total investment spend in operation and management of battery unit in each period
 
