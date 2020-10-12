@@ -25,8 +25,8 @@ warnings.filterwarnings("ignore")
 StartDate = '01/07/2017 00:00:00' 
 PlotScenario  = 1    
 PlotResolution = 1000 
-PlotStartDate = 383040    
-PlotEndDate   = 383040+1441      
+PlotStartDate = 511200    
+PlotEndDate   = 511200+1441      
 nS = 1
 nC = 4
 fontticks = 18
@@ -259,7 +259,7 @@ for s in range(1,nS+1):
     fig.legend(bbox_to_anchor=(0.23,0.655), ncol=1, fontsize=fontlegend, frameon=False)
     fig.tight_layout()    
     
-    pylab.savefig('Figure8.svg', format='svg')
+    pylab.savefig('Figure7_21Dec.svg', format='svg')
                     
 
 

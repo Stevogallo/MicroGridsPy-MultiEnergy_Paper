@@ -30,8 +30,8 @@ configurations = ['a_Traditional-Energy-System',
 "Import params"
 StartDate = '01/07/2017 00:00:00' 
 PlotScenario  = 1    
-PlotStartDate = 216000    
-PlotEndDate   = 216000+1441    
+PlotStartDate = 511200    
+PlotEndDate   = 511200+1441    
 PlotResolution = 600   
 nS = 1
 nC = 4
@@ -404,7 +404,7 @@ for c in configurations:
 fig.legend(bbox_to_anchor=(0.18,0.97), fontsize=fontaxis, facecolor='white')
 fig.tight_layout()    
 
-pylab.savefig('ElectricDispatch_allCases.png', dpi=PlotResolution)
+pylab.savefig('ElectricDispatch_allCases_21Dec.png', dpi=PlotResolution)
                     
 
 
